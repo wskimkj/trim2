@@ -71,6 +71,7 @@
       font-size: 20px;
     }
 
+    /* ⚡ 버튼 (구글시트 연결) */
     .app-tag {
       font-size: 11px;
       padding: 3px 9px;
@@ -82,6 +83,8 @@
       align-items: center;
       gap: 4px;
       box-shadow: 0 4px 12px rgba(129, 140, 248, 0.35);
+      cursor: pointer;
+      border: none;
     }
 
     .app-subtitle {
@@ -89,40 +92,7 @@
       color: #6b7280;
     }
 
-    .header-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .sheet-button {
-      padding: 6px 13px;
-      border-radius: 999px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: rgba(248, 250, 252, 0.9);
-      font-size: 12px;
-      color: #374151;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      backdrop-filter: blur(10px);
-    }
-
-    .sheet-button span.icon {
-      font-size: 14px;
-    }
-
-    .sheet-button:hover {
-      background: #e5e7eb;
-    }
-
-    .sheet-caption {
-      font-size: 11px;
-      color: #9ca3af;
-    }
+    /* header-actions / sheet-button / sheet-caption은 더 이상 사용 X */
 
     .search-box {
       display: flex;
@@ -203,13 +173,9 @@
       color: #4f46e5;
     }
 
+    /* 분류 필터는 화면에서 숨김 */
     .category-filter {
-      font-size: 12px;
-      color: #4b5563;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
+      display: none;
     }
 
     .category-select {
@@ -538,7 +504,6 @@
       color: #4b5563;
     }
 
-    /* 🔹 톤 모드 버튼 */
     .tone-controls {
       display: inline-flex;
       align-items: center;
@@ -646,7 +611,7 @@
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.18s ease-out, transform 0.18s ease-out;
+      transition: opacity 0.18s ease-out, transform 0.18s.ease-out;
       z-index: 9999;
     }
 
@@ -732,19 +697,15 @@
             <span class="app-title-emoji">💬</span>
             Templete
           </div>
-          <div class="app-tag">
+          <!-- ⚡ 버튼: 구글 시트 연결 -->
+          <button id="sheetOpenBtn" class="app-tag" type="button" title="Google Sheets 열기">
             <span>⚡</span>
-          </div>
+          </button>
         </div>
         <div class="app-subtitle">
         </div>
       </div>
-      <div class="header-actions">
-        <button id="sheetOpenBtn" class="sheet-button" type="button">
-          <span class="icon">📄</span>
-          <span>Google Sheets 열기</span>
-        </button>
-      </div>
+      <!-- 🔴 Google Sheets 열기 버튼 영역 제거 -->
     </div>
 
     <div class="search-box">
@@ -839,7 +800,6 @@
               </button>
             </div>
 
-            <!-- 🔹 톤 모드 선택 -->
             <div class="tone-controls">
               <span class="tone-label">톤:</span>
               <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
@@ -848,26 +808,24 @@
           </div>
           <div class="editor-actions">
             <button id="editorCopyBtn" class="copy-main" type="button">
-  <span class="icon">📋</span>
-  <span>복사</span>
-</button>
+              <span class="icon">📋</span>
+              <span>복사</span>
+            </button>
 
-<button id="editorPolishBtn" class="send-polish-btn" type="button">
-  <span class="icon">✨</span>
-  <span>AI로 다듬기</span>
-</button>
+            <button id="editorPolishBtn" class="send-polish-btn" type="button">
+              <span class="icon">✨</span>
+              <span>AI로 다듬기</span>
+            </button>
 
-<button id="editorResetBtn" class="reset-btn" type="button" disabled>원본으로 되돌리기</button>
-
+            <button id="editorResetBtn" class="reset-btn" type="button" disabled>원본으로 되돌리기</button>
           </div>
         </div>
 
-       <textarea
-  id="editorTextarea"
-  class="editor-textarea"
-  placeholder="선택한 메크로가 여기에 표시됩니다. 필요한 내용은 자유롭게 수정·추가해 주세요."
-></textarea>
-
+        <textarea
+          id="editorTextarea"
+          class="editor-textarea"
+          placeholder="선택한 메크로가 여기에 표시됩니다. 필요한 내용은 자유롭게 수정·추가해 주세요."
+        ></textarea>
 
         <div class="editor-footer">
           <span id="editorMeta">선택된 메크로 없음</span>
@@ -907,7 +865,6 @@
     let filteredMacros = [];
     let activeMacro = null;
 
-    // 🔐 OpenAI 키 (코드에 하드코딩 X, prompt로만 입력)
     let OPENAI_API_KEY = "";
 
     // === 2) CSV 파서 ===
@@ -1012,7 +969,7 @@
 
     const toneButtons = document.querySelectorAll(".tone-pill");
 
-    // === 5) 시트 열기 버튼 ===
+    // === 5) 시트 열기 버튼 (⚡) ===
     sheetOpenBtn.addEventListener("click", () => {
       window.open(SHEET_LINK, "_blank", "noopener");
     });
