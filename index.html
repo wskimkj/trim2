@@ -850,23 +850,25 @@
             </div>
           </div>
           <div class="editor-actions">
-            <button id="editorCopyBtn" class="copy-main" type="button" disabled>
-              <span class="icon">📋</span>
-              <span>복사</span>
-            </button>
-            <button id="editorResetBtn" class="reset-btn" type="button" disabled>원본으로 되돌리기</button>
-            <button id="editorPolishBtn" class="send-polish-btn" type="button" disabled>
-              <span class="icon">✨</span>
-              <span>AI로 다듬기</span>
-            </button>
+            <button id="editorCopyBtn" class="copy-main" type="button">
+  <span class="icon">📋</span>
+  <span>복사</span>
+</button>
+
+<button id="editorPolishBtn" class="send-polish-btn" type="button">
+  <span class="icon">✨</span>
+  <span>AI로 다듬기</span>
+</button>
+
+<button id="editorResetBtn" class="reset-btn" type="button" disabled>원본으로 되돌리기</button>
+
           </div>
         </div>
 
         <textarea
           id="editorTextarea"
           class="editor-textarea"
-          placeholder="선택한 메크로가 여기에 표시됩니다. 필요한 내용은 자유롭게 수정·추가해 주세요."
-          disabled
+          placeholder="선택한 메크로가 여기에 표시됩니다. 필요한 내용은 자유롭게 수정·추가해 주세요.
         ></textarea>
 
         <div class="editor-footer">
