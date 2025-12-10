@@ -538,7 +538,40 @@
       color: #4b5563;
     }
 
-    /* 🔹 새로 추가: AI로 다듬기 버튼 */
+    /* 🔹 톤 모드 버튼 */
+    .tone-controls {
+      display: inline-flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .tone-label {
+      margin-right: 2px;
+    }
+
+    .tone-pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #4b5563;
+    }
+
+    .tone-pill.active {
+      border-color: #6366f1;
+      background: #eef2ff;
+      color: #3730a3;
+    }
+
     .send-polish-btn {
       padding: 5px 12px;
       border-radius: 999px;
@@ -770,7 +803,7 @@
         <div class="list-header">
           <div class="list-title">
             <span class="icon">📚</span>
-            ㅣLIST
+           ㅣLIST
           </div>
           <div class="list-hint">항목에 마우스를 올리면 오른쪽에 미리보기가 떠요</div>
         </div>
@@ -808,6 +841,13 @@
                 <span class="icon">🙏</span><span>꼬리말</span>
               </button>
             </div>
+
+            <!-- 🔹 톤 모드 선택 -->
+            <div class="tone-controls">
+              <span class="tone-label">톤:</span>
+              <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
+              <button type="button" class="tone-pill" data-value="차분">차분</button>
+            </div>
           </div>
           <div class="editor-actions">
             <button id="editorCopyBtn" class="copy-main" type="button" disabled>
@@ -815,7 +855,6 @@
               <span>복사</span>
             </button>
             <button id="editorResetBtn" class="reset-btn" type="button" disabled>원본으로 되돌리기</button>
-            <!-- 🔹 새로 추가: AI 다듬기 버튼 -->
             <button id="editorPolishBtn" class="send-polish-btn" type="button" disabled>
               <span class="icon">✨</span>
               <span>AI로 다듬기</span>
@@ -826,7 +865,7 @@
         <textarea
           id="editorTextarea"
           class="editor-textarea"
-          placeholder="선택한 메크로가 여기에 표시됩니다."
+          placeholder="선택한 메크로가 여기에 표시됩니다. 필요한 내용은 자유롭게 수정·추가해 주세요."
           disabled
         ></textarea>
 
@@ -868,7 +907,7 @@
     let filteredMacros = [];
     let activeMacro = null;
 
-    // 🔐 OpenAI 키 (코드에 저장 X, 실행 시 prompt로 입력)
+    // 🔐 OpenAI 키 (코드에 하드코딩 X, prompt로만 입력)
     let OPENAI_API_KEY = "";
 
     // === 2) CSV 파서 ===
@@ -960,8 +999,6 @@
     const charCountEl = document.getElementById("charCount");
     const editorPolishBtn = document.getElementById("editorPolishBtn");
 
-    const toast = document.getElementById("toast");
-
     const previewBubbleEl = document.getElementById("previewBubble");
     const previewTitleTextEl = document.getElementById("previewTitleText");
     const previewBodyTextEl = document.getElementById("previewBodyText");
@@ -972,6 +1009,8 @@
     const listPanelEl = document.querySelector(".list-panel");
     const typeFilterRadios = document.querySelectorAll('input[name="typeFilter"]');
     const typeFilterLabels = document.querySelectorAll(".type-pill");
+
+    const toneButtons = document.querySelectorAll(".tone-pill");
 
     // === 5) 시트 열기 버튼 ===
     sheetOpenBtn.addEventListener("click", () => {
@@ -1142,7 +1181,7 @@
       }
     }
 
-    // === 10) 편집창: 글자수 표시 ===
+    // === 10) 글자수 표시 ===
     function updateCharCount() {
       const len = editorTextarea.value.length;
       charCountEl.textContent = `${len}자`;
@@ -1275,7 +1314,7 @@
       });
     });
 
-    // === 15) 필터 이벤트 & 초기 로드 ===
+    // === 15) 타입 필터 ===
     searchButton.addEventListener("click", searchMacros);
     searchInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") searchMacros();
@@ -1294,7 +1333,24 @@
       });
     });
 
-    // === 16) AI로 다듬기 버튼 ===
+    // === 16) 톤 모드 토글 ===
+    function setupToneToggle() {
+      toneButtons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          toneButtons.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+        });
+      });
+    }
+
+    function getActiveTone() {
+      const active = Array.from(toneButtons).find(b => b.classList.contains("active"));
+      return active ? active.getAttribute("data-value") : "발랄";
+    }
+
+    setupToneToggle();
+
+    // === 17) AI로 다듬기 ===
     editorPolishBtn.addEventListener("click", async () => {
       if (editorTextarea.disabled) return;
 
@@ -1303,6 +1359,8 @@
         alert("다듬을 문장이 없습니다.");
         return;
       }
+
+      const tone = getActiveTone(); // "발랄" 또는 "차분"
 
       if (!OPENAI_API_KEY) {
         const key = prompt(
@@ -1318,6 +1376,24 @@
       editorPolishBtn.disabled = true;
       editorPolishBtn.innerText = "다듬는 중...";
 
+      const toneInstruction =
+        tone === "발랄"
+          ? `
+- 톤: 발랄
+- 토스 고객센터처럼 단정하지만 친근한 말투.
+- '고객님', '도와드리다', '확인해보고 안내드리다' 같은 표현 중심.
+- 이모지는 😊🙂✨💬💡✅ 정도를 자연스럽게 사용할 수 있지만, 말보다 많아지지 않게.
+- 'ㅋㅋ', 'ㅎㅎ', 과한 반말·장난스러운 어투는 사용하지 않는다.
+          `
+          : `
+- 톤: 차분
+- 예민하거나 불편함을 느끼는 고객님을 상대한다고 가정한다.
+- 공감·사과 표현을 1문장 이상 자연스럽게 포함한다.
+  (예: "불편을 겪으셨을 것 같아요.", "걱정되셨을 텐데 죄송합니다." 등)
+- 말투는 또렷하고 단정하게, 최대한 안정감 있게 유지한다.
+- 이모지는 사용하지 않거나, 정말 필요한 경우에만 1개 이내로 제한한다.
+          `;
+
       const systemMessage = `
 너는 고객 상담 채팅 멘트를 다듬는 비서야.
 
@@ -1328,7 +1404,13 @@
 - 내용을 요약하지 말고, 의미와 뉘앙스를 유지하면서 자연스럽게 정리한다.
 - 'ㅋㅋ', 'ㅎㅎ', 과도한 반말·인터넷 슬랭은 사용하지 않는다.
 - 존댓말(요/입니다) 위주로, 상담사다운 단정한 어투를 유지한다.
-- 불필요한 머리말(예: "수정된 멘트:" 등)은 붙이지 않는다.
+
+[톤 모드 규칙]
+${toneInstruction}
+
+[출력 형식]
+- 완성된 상담 "한 번"에 보낼 멘트만 출력한다.
+- 불필요한 설명, 따옴표, 머리말(예: "수정된 멘트:" 등)은 붙이지 않는다.
       `.trim();
 
       const userMessage = `
