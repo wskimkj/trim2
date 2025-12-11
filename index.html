@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title> TEMPLETE</title>
+  <title>TEMPLETE</title>
   <style>
     * { box-sizing: border-box; }
 
@@ -91,8 +91,6 @@
       font-size: 13px;
       color: #6b7280;
     }
-
-    /* header-actions / sheet-button / sheet-caption은 더 이상 사용 X */
 
     .search-box {
       display: flex;
@@ -219,7 +217,7 @@
 
     .app-body {
       display: grid;
-      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.25fr);
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.35fr);
       gap: 16px;
       flex: 1;
       min-height: 0;
@@ -359,121 +357,278 @@
       font-size: 13px;
     }
 
-       // === 18) 고객 문의 → 답변 생성 ===
-    editorAnswerBtn.addEventListener("click", async () => {
-      const question = (questionTextarea.value || "").trim();
-      if (!question) {
-        alert("고객님이 남긴 문의 내용을 먼저 입력해 주세요.");
-        return;
-      }
+    /* ---------------------- */
+    /* 오른쪽: 편집 패널 전체 */
+    /* ---------------------- */
 
-      const tone = getActiveTone(); // "발랄" 또는 "차분"
+    .editor-panel {
+      border-radius: 20px;
+      border: 1px solid rgba(209, 213, 219, 0.9);
+      background: radial-gradient(circle at top left, #eef2ff, #f9fafb 55%);
+      padding: 12px 14px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow:
+        0 12px 30px rgba(148, 163, 184, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      min-height: 0;
+    }
 
-      if (!OPENAI_API_KEY) {
-        const key = prompt(
-          "OpenAI API 키를 입력해주세요.\n(이 키는 파일에 저장되지 않고, 이 브라우저에서만 일시적으로 사용됩니다)"
-        );
-        if (!key) {
-          alert("API 키를 입력하지 않으면 사용할 수 없습니다.");
-          return;
-        }
-        OPENAI_API_KEY = key.trim();
-      }
+    .editor-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-shrink: 0;
+    }
 
-      editorAnswerBtn.disabled = true;
-      editorAnswerBtn.innerText = "생성 중...";
+    .editor-title-wrap {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
 
-      const toneInstructionForAnswer =
-        tone === "발랄"
-          ? `
-- 밝고 친근하지만, 상담사답게 단정한 말투.
-- '고객님'을 기본 호칭으로 사용한다.
-- 이모지는 쓸 수 있지만 2개 이내로 제한한다. (없어도 괜찮음)
-          `
-          : `
-- 최대한 차분하고 안정감 있는 톤.
-- 공감/안심/사과 문장을 1문장 이상 포함한다.
-- 이모지는 사용하지 않는다.
-          `;
+    .editor-top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
 
-      const systemMessageForAnswer = `
-너는 화이트샌즈 고객센터 상담사야.
+    .editor-label {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #9ca3af;
+    }
 
-[목표]
-- 고객이 남긴 문의 내용을 읽고, 채팅 상담에서 바로 쓸 수 있는 답변 멘트를 작성한다.
-- 한 번에 보낼 "한 덩어리"의 답변으로 만들어야 한다.
+    .tone-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
 
-[형식]
-- 각 문장 또는 의미 단위마다 줄바꿈(엔터)을 넣어, 모바일 채팅창에서 읽기 편하게 만든다.
-- 존댓말(요/입니다)만 사용한다.
-- 불필요한 인사(예: "좋은 하루 되세요~")는 한 번만, 과하지 않게 사용한다.
-- 머리말/꼬리말은 필요하면 자연스럽게 포함해도 되지만, 너무 길게 늘리지 않는다.
+    .tone-pill {
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: #f9fafb;
+      font-size: 11px;
+      cursor: pointer;
+      color: #4b5563;
+    }
 
-[내용]
-- 고객이 궁금해하는 핵심을 먼저 짚고 바로 답해 준다.
-- 필요한 경우, 추가로 확인해야 할 정보(예: 주문번호, 연락처 등)를 정중하게 요청한다.
-- 조건/주의사항/처리 예상일 등 중요한 정보는 빼먹지 않게 또렷하게 적는다.
+    .tone-pill.active {
+      border-color: #6366f1;
+      background: #eef2ff;
+      color: #3730a3;
+    }
 
-[톤 규칙]
-${toneInstructionForAnswer}
+    .editor-title-line {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
 
-[주의]
-- 안내 멘트만 출력한다. (설명, 따옴표, 불릿 등은 붙이지 않는다.)
-      `.trim();
+    .editor-title-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #111827;
+    }
 
-      const userMessageForAnswer = `
-[고객 문의 내용]
-${question}
-      `.trim();
+    .editor-category-pill {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 2px 9px;
+      background: rgba(79, 70, 229, 0.08);
+      color: #4f46e5;
+      border: 1px solid rgba(129, 140, 248, 0.4);
+    }
 
-      try {
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + OPENAI_API_KEY
-          },
-          body: JSON.stringify({
-            model: "gpt-4.1-mini",
-            messages: [
-              { role: "system", content: systemMessageForAnswer },
-              { role: "user", content: userMessageForAnswer }
-            ]
-          })
-        });
+    .snippet-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
 
-        const data = await response.json();
+    .snippet-btn {
+      font-size: 11px;
+      border-radius: 999px;
+      padding: 3px 10px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+    }
 
-        if (data.error) {
-          console.error("API 오류:", data.error);
-          alert("오류가 발생했습니다: " + data.error.message);
-        } else {
-          const answer = data.choices?.[0]?.message?.content?.trim();
-          if (answer) {
-            // 기존 내용이 있으면 덮어쓸지 물어보고, 없으면 바로 넣기
-            if (editorTextarea.value.trim()) {
-              const replace = confirm("편집창 내용을 새로 생성된 답변으로 교체할까요?");
-              if (replace) {
-                editorTextarea.value = answer;
-              } else {
-                editorTextarea.value = editorTextarea.value.replace(/\s*$/, "") + "\n\n" + answer;
-              }
-            } else {
-              editorTextarea.value = answer;
-            }
-            updateCharCount();
-            showToast("문의 답변을 생성했어요");
-          }
-        }
-      } catch (err) {
-        console.error("네트워크/요청 에러:", err);
-        alert("요청 중 오류가 발생했습니다: " + (err?.message || err));
-      } finally {
-        editorAnswerBtn.disabled = false;
-        editorAnswerBtn.innerText = "답변 생성";
-      }
-    });
+    .snippet-btn:hover {
+      background: #e5e7eb;
+    }
 
+    .editor-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .copy-main {
+      padding: 7px 16px;
+      border-radius: 999px;
+      border: none;
+      background: #111827;
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.45);
+    }
+
+    .copy-main span.icon {
+      font-size: 14px;
+    }
+
+    .copy-main:hover {
+      background: #020617;
+      transform: translateY(-0.5px);
+    }
+
+    .secondary-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid rgba(79, 70, 229, 0.4);
+      background: rgba(238, 242, 255, 0.95);
+      font-size: 11px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: #3730a3;
+    }
+
+    .secondary-btn:hover {
+      background: rgba(224, 231, 255, 1);
+    }
+
+    .ghost-btn {
+      border: none;
+      background: none;
+      font-size: 11px;
+      color: #9ca3af;
+      cursor: pointer;
+    }
+
+    .ghost-btn:hover {
+      color: #6b7280;
+    }
+
+    /* 문의 → 답변 생성 영역 */
+    .answer-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) auto;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+    }
+
+    .question-textarea {
+      width: 100%;
+      border: none;
+      outline: none;
+      resize: vertical;
+      min-height: 70px;
+      max-height: 120px;
+      font-family: inherit;
+      font-size: 12px;
+      line-height: 1.5;
+      background: transparent;
+    }
+
+    .answer-side {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 6px;
+    }
+
+    .answer-btn {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: none;
+      background: linear-gradient(130deg, #6366f1, #a855f7);
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      box-shadow: 0 10px 22px rgba(129, 140, 248, 0.5);
+    }
+
+    .answer-btn:hover {
+      opacity: 0.97;
+      transform: translateY(-0.5px);
+    }
+
+    .answer-hint {
+      margin: 0;
+      font-size: 11px;
+      color: #6b7280;
+      text-align: right;
+    }
+
+    .editor-textarea {
+      width: 100%;
+      flex: 1;
+      resize: none;
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      padding: 10px 11px;
+      font-family: inherit;
+      font-size: 13px;
+      line-height: 1.5;
+      outline: none;
+      background: rgba(255, 255, 255, 0.98);
+      box-shadow:
+        inset 0 1px 2px rgba(15, 23, 42, 0.08),
+        0 0 0 1px rgba(255, 255, 255, 0.7);
+      overflow-y: auto;
+      min-height: 0;
+    }
+
+    .editor-textarea:focus {
+      border-color: #6366f1;
+      box-shadow:
+        inset 0 1px 2px rgba(15, 23, 42, 0.08),
+        0 0 0 1px rgba(129, 140, 248, 0.7);
+    }
+
+    .editor-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #9ca3af;
+      flex-shrink: 0;
+      margin-top: 4px;
+    }
+
+    .editor-footer span strong {
+      color: #6b7280;
+    }
+
+    /* 토스트 & 미리보기 버블 */
 
     .toast {
       position: fixed;
@@ -488,7 +643,7 @@ ${question}
       box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.18s ease-out, transform 0.18s.ease-out;
+      transition: opacity 0.18s ease-out, transform 0.18s ease-out;
       z-index: 9999;
     }
 
@@ -554,6 +709,21 @@ ${question}
       .editor-panel {
         min-height: 260px;
       }
+      .editor-header {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .editor-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+      }
+      .answer-row {
+        grid-template-columns: 1fr;
+      }
+      .answer-side {
+        align-items: flex-start;
+        text-align: left;
+      }
       .preview-bubble {
         position: fixed;
         right: 16px;
@@ -578,10 +748,8 @@ ${question}
             <span>⚡</span>
           </button>
         </div>
-        <div class="app-subtitle">
-        </div>
+        <div class="app-subtitle"></div>
       </div>
-      <!-- 🔴 Google Sheets 열기 버튼 영역 제거 -->
     </div>
 
     <div class="search-box">
@@ -638,7 +806,7 @@ ${question}
         <div class="list-header">
           <div class="list-title">
             <span class="icon">📚</span>
-           ㅣLIST
+            ㅣLIST
           </div>
         </div>
 
@@ -653,7 +821,7 @@ ${question}
         <div id="results" class="results"></div>
       </div>
 
-           <!-- 오른쪽: 편집 -->
+      <!-- 오른쪽: 편집 -->
       <div class="editor-panel">
         <div class="editor-header">
           <div class="editor-title-wrap">
@@ -725,7 +893,8 @@ ${question}
           <span id="charCount">0자</span>
         </div>
       </div>
-
+    </div> <!-- /app-body -->
+  </div> <!-- /app -->
 
   <!-- 토스트 -->
   <div id="toast" class="toast">복사</div>
@@ -1307,6 +1476,7 @@ ${text}
         editorPolishBtn.innerText = "AI로 다듬기";
       }
     });
+
     // === 18) 고객 문의 → 답변 생성 ===
     editorAnswerBtn.addEventListener("click", async () => {
       const question = (questionTextarea.value || "").trim();
@@ -1424,8 +1594,6 @@ ${question}
 
     // 페이지 열리면 시트에서 데이터 불러오기
     loadMacrosFromSheet();
-
-    
   </script>
 </body>
 </html>
