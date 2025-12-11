@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TEMPLETE</title>
 
-  <!-- 🔥 스타일 전체는 PART 2에서 붙여넣기 -->
   <style id="app-style">
 /* ============================
    GLOBAL
@@ -97,6 +96,9 @@ body {
 .type-filter {
   display: flex;
   gap: 6px;
+  align-items: center;
+  font-size: 11px;
+  color: #6b7280;
 }
 .type-pill {
   padding: 3px 8px;
@@ -105,6 +107,9 @@ body {
   background: #f9fafb;
   font-size: 11px;
   cursor: pointer;
+}
+.type-pill input {
+  display: none;
 }
 .type-pill.active {
   border-color: #6366f1;
@@ -119,6 +124,7 @@ body {
   grid-template-columns: 1.05fr 1.35fr;
   gap: 18px;
   flex: 1;
+  min-height: 0;
 }
 
 /* LEFT LIST PANEL */
@@ -130,6 +136,7 @@ body {
   display: flex;
   flex-direction: column;
   min-height: 0;
+  position: relative; /* 미리보기 기준 */
 }
 
 .list-title {
@@ -173,6 +180,7 @@ body {
     0 20px 45px rgba(129,140,248,0.45),
     0 0 0 1px rgba(196,181,253,0.9);
   display: none;
+  font-size: 11px;
 }
 .preview-bubble.visible { display: block; }
 
@@ -199,11 +207,13 @@ body {
   align-items: flex-start;
   padding-bottom: 6px;
   border-bottom: 1px solid rgba(209,213,219,0.7);
+  gap: 12px;
 }
 
 .editor-top-row {
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 
 .tone-controls {
@@ -216,6 +226,7 @@ body {
   border: 1px solid #d1d5db;
   background: #f9fafb;
   cursor: pointer;
+  font-size: 11px;
 }
 .tone-pill.active {
   background: #eef2ff;
@@ -226,6 +237,7 @@ body {
 .snippet-controls {
   display: flex;
   gap: 4px;
+  margin-top: 6px;
 }
 .snippet-btn {
   padding: 4px 10px;
@@ -233,6 +245,7 @@ body {
   border: 1px solid rgba(148,163,184,0.7);
   background: #fff;
   cursor: pointer;
+  font-size: 11px;
 }
 
 /* Editor actions */
@@ -248,6 +261,7 @@ body {
   background: #111827;
   color: #fff;
   cursor: pointer;
+  font-size: 12px;
 }
 .secondary-btn {
   padding: 6px 12px;
@@ -255,12 +269,14 @@ body {
   border: 1px solid rgba(79,70,229,0.4);
   background: rgba(238,242,255,0.95);
   cursor: pointer;
+  font-size: 12px;
 }
 .ghost-btn {
   background: none;
   border: none;
   color: #9ca3af;
   cursor: pointer;
+  font-size: 11px;
 }
 
 /* 문의 답변 생성 */
@@ -302,6 +318,7 @@ body {
   background: #fff;
   resize: none;
   outline: none;
+  font-size: 13px;
 }
 
 /* Footer */
@@ -309,6 +326,7 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 11px;
+  color: #6b7280;
 }
 
 /* Toast */
@@ -323,13 +341,154 @@ body {
   border-radius: 999px;
   opacity: 0;
   transition: 0.18s;
+  font-size: 12px;
 }
 .toast.show {
   opacity: 1;
 }
 
+/* ============================
+   레이아웃 보정용 추가 스타일
+============================ */
 
-    
+/* 제목 행 */
+.app-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.app-title-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 검색 결과 / 필터 상단 줄 */
+.top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 6px;
+  font-size: 12px;
+}
+.result-count {
+  margin-bottom: 4px;
+  color: #6b7280;
+}
+
+/* 리스트 헤더 */
+.list-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+/* 매크로 리스트 아이템 내부 */
+.macro-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 6px;
+}
+.macro-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #111827;
+}
+.macro-category {
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4f46e5;
+}
+.macro-subtext {
+  margin-top: 4px;
+  font-size: 11px;
+  color: #6b7280;
+}
+.copy-mini {
+  border: none;
+  background: #e5e7eb;
+  border-radius: 999px;
+  padding: 3px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* 빈 상태 */
+.empty-state {
+  font-size: 12px;
+  color: #9ca3af;
+  padding: 16px 8px;
+  text-align: center;
+}
+
+/* 에디터 헤더 쪽 */
+.editor-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: #6b7280;
+  margin-bottom: 4px;
+}
+.editor-title-line {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+  margin-bottom: 6px;
+}
+.editor-title-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+}
+.editor-category-pill {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #4b5563;
+}
+
+/* 문의 → 답변 영역 오른쪽 */
+.answer-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  font-size: 11px;
+  color: #6b7280;
+}
+.answer-hint {
+  margin: 6px 0 0;
+  text-align: right;
+  line-height: 1.4;
+}
+
+/* 반응형(모바일) – 좌/우 패널 세로로 쌓기 */
+@media (max-width: 900px) {
+  body {
+    padding: 12px;
+  }
+  .app {
+    height: auto;
+  }
+  .app-body {
+    grid-template-columns: 1fr;
+    grid-auto-rows: auto;
+  }
+  .preview-bubble {
+    display: none !important;
+  }
+}
   </style>
 </head>
 
@@ -454,8 +613,8 @@ body {
   <!-- Toast -->
   <div id="toast" class="toast">복사 완료</div>
 
-  <!-- 🔥 전체 스크립트는 PART 3에서 붙여넣기 -->
-  <script id="app-script">// ============================
+  <script id="app-script">
+// ============================
 //  공통: 토스트
 // ============================
 const toastEl = document.getElementById("toast");
@@ -1143,6 +1302,6 @@ ${question}
 // 18) 초기 로드
 // ============================
 loadMacrosFromSheet();
-</script>
+  </script>
 </body>
 </html>
