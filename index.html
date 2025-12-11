@@ -359,244 +359,121 @@
       font-size: 13px;
     }
 
-    /* 오른쪽: 편집 패널 */
-    .editor-panel {
-      border-radius: 20px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      background: radial-gradient(circle at top left, #eef2ff, #f9fafb 55%);
-      padding: 12px 14px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      box-shadow:
-        0 12px 30px rgba(148, 163, 184, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
-      min-height: 0;
-      position: relative;
-    }
+       // === 18) 고객 문의 → 답변 생성 ===
+    editorAnswerBtn.addEventListener("click", async () => {
+      const question = (questionTextarea.value || "").trim();
+      if (!question) {
+        alert("고객님이 남긴 문의 내용을 먼저 입력해 주세요.");
+        return;
+      }
 
-    .editor-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 8px;
-      flex-shrink: 0;
-    }
+      const tone = getActiveTone(); // "발랄" 또는 "차분"
 
-    .editor-title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
+      if (!OPENAI_API_KEY) {
+        const key = prompt(
+          "OpenAI API 키를 입력해주세요.\n(이 키는 파일에 저장되지 않고, 이 브라우저에서만 일시적으로 사용됩니다)"
+        );
+        if (!key) {
+          alert("API 키를 입력하지 않으면 사용할 수 없습니다.");
+          return;
+        }
+        OPENAI_API_KEY = key.trim();
+      }
 
-    .editor-label {
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      color: #9ca3af;
-    }
+      editorAnswerBtn.disabled = true;
+      editorAnswerBtn.innerText = "생성 중...";
 
-    .editor-title-line {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
+      const toneInstructionForAnswer =
+        tone === "발랄"
+          ? `
+- 밝고 친근하지만, 상담사답게 단정한 말투.
+- '고객님'을 기본 호칭으로 사용한다.
+- 이모지는 쓸 수 있지만 2개 이내로 제한한다. (없어도 괜찮음)
+          `
+          : `
+- 최대한 차분하고 안정감 있는 톤.
+- 공감/안심/사과 문장을 1문장 이상 포함한다.
+- 이모지는 사용하지 않는다.
+          `;
 
-    #editorTitle {
-      font-size: 14px;
-      font-weight: 600;
-      color: #111827;
-    }
+      const systemMessageForAnswer = `
+너는 화이트샌즈 고객센터 상담사야.
 
-    #editorCategory {
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 2px 9px;
-      background: rgba(79, 70, 229, 0.1);
-      color: #4f46e5;
-      border: 1px solid rgba(129, 140, 248, 0.5);
-    }
+[목표]
+- 고객이 남긴 문의 내용을 읽고, 채팅 상담에서 바로 쓸 수 있는 답변 멘트를 작성한다.
+- 한 번에 보낼 "한 덩어리"의 답변으로 만들어야 한다.
 
-    .editor-hint {
-      font-size: 11px;
-      color: #6b7280;
-    }
+[형식]
+- 각 문장 또는 의미 단위마다 줄바꿈(엔터)을 넣어, 모바일 채팅창에서 읽기 편하게 만든다.
+- 존댓말(요/입니다)만 사용한다.
+- 불필요한 인사(예: "좋은 하루 되세요~")는 한 번만, 과하지 않게 사용한다.
+- 머리말/꼬리말은 필요하면 자연스럽게 포함해도 되지만, 너무 길게 늘리지 않는다.
 
-    .snippet-controls {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-    }
+[내용]
+- 고객이 궁금해하는 핵심을 먼저 짚고 바로 답해 준다.
+- 필요한 경우, 추가로 확인해야 할 정보(예: 주문번호, 연락처 등)를 정중하게 요청한다.
+- 조건/주의사항/처리 예상일 등 중요한 정보는 빼먹지 않게 또렷하게 적는다.
 
-    .snippet-label {
-      font-size: 11px;
-      color: #6b7280;
-      margin-right: 2px;
-    }
+[톤 규칙]
+${toneInstructionForAnswer}
 
-    .snippet-btn {
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 3px 9px;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-      background: rgba(255, 255, 255, 0.9);
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
+[주의]
+- 안내 멘트만 출력한다. (설명, 따옴표, 불릿 등은 붙이지 않는다.)
+      `.trim();
 
-    .snippet-btn:hover {
-      background: #e5e7eb;
-    }
+      const userMessageForAnswer = `
+[고객 문의 내용]
+${question}
+      `.trim();
 
-    .snippet-btn span.icon {
-      font-size: 12px;
-    }
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + OPENAI_API_KEY
+          },
+          body: JSON.stringify({
+            model: "gpt-4.1-mini",
+            messages: [
+              { role: "system", content: systemMessageForAnswer },
+              { role: "user", content: userMessageForAnswer }
+            ]
+          })
+        });
 
-    .editor-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 6px;
-    }
+        const data = await response.json();
 
-    .copy-main {
-      padding: 7px 16px;
-      border-radius: 999px;
-      border: none;
-      background: #111827;
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.45);
-    }
+        if (data.error) {
+          console.error("API 오류:", data.error);
+          alert("오류가 발생했습니다: " + data.error.message);
+        } else {
+          const answer = data.choices?.[0]?.message?.content?.trim();
+          if (answer) {
+            // 기존 내용이 있으면 덮어쓸지 물어보고, 없으면 바로 넣기
+            if (editorTextarea.value.trim()) {
+              const replace = confirm("편집창 내용을 새로 생성된 답변으로 교체할까요?");
+              if (replace) {
+                editorTextarea.value = answer;
+              } else {
+                editorTextarea.value = editorTextarea.value.replace(/\s*$/, "") + "\n\n" + answer;
+              }
+            } else {
+              editorTextarea.value = answer;
+            }
+            updateCharCount();
+            showToast("문의 답변을 생성했어요");
+          }
+        }
+      } catch (err) {
+        console.error("네트워크/요청 에러:", err);
+        alert("요청 중 오류가 발생했습니다: " + (err?.message || err));
+      } finally {
+        editorAnswerBtn.disabled = false;
+        editorAnswerBtn.innerText = "답변 생성";
+      }
+    });
 
-    .copy-main span.icon {
-      font-size: 14px;
-    }
-
-    .copy-main:hover {
-      background: #020617;
-      transform: translateY(-0.5px);
-    }
-
-    .reset-btn {
-      border: none;
-      background: none;
-      font-size: 11px;
-      color: #6b7280;
-      cursor: pointer;
-      text-decoration: underline;
-      padding: 0;
-    }
-
-    .reset-btn:hover {
-      color: #4b5563;
-    }
-
-    .tone-controls {
-      display: inline-flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 4px;
-      font-size: 11px;
-      color: #6b7280;
-    }
-
-    .tone-label {
-      margin-right: 2px;
-    }
-
-    .tone-pill {
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-      font-size: 11px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      color: #4b5563;
-    }
-
-    .tone-pill.active {
-      border-color: #6366f1;
-      background: #eef2ff;
-      color: #3730a3;
-    }
-
-    .send-polish-btn {
-      padding: 5px 12px;
-      border-radius: 999px;
-      border: 1px dashed rgba(79, 70, 229, 0.7);
-      background: rgba(238, 242, 255, 0.98);
-      font-size: 11px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #3730a3;
-    }
-
-    .send-polish-btn span.icon {
-      font-size: 13px;
-    }
-
-    .send-polish-btn:hover {
-      background: rgba(224, 231, 255, 1);
-    }
-
-    .editor-textarea {
-      width: 100%;
-      flex: 1;
-      resize: none;
-      border-radius: 16px;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-      padding: 10px 11px;
-      font-family: inherit;
-      font-size: 13px;
-      line-height: 1.5;
-      outline: none;
-      background: rgba(255, 255, 255, 0.98);
-      box-shadow:
-        inset 0 1px 2px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(255, 255, 255, 0.7);
-      overflow-y: auto;
-      min-height: 0;
-    }
-
-    .editor-textarea:focus {
-      border-color: #6366f1;
-      box-shadow:
-        inset 0 1px 2px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(129, 140, 248, 0.7);
-    }
-
-    .editor-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: #9ca3af;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-
-    .editor-footer span strong {
-      color: #6b7280;
-    }
 
     .toast {
       position: fixed;
@@ -776,54 +653,71 @@
         <div id="results" class="results"></div>
       </div>
 
-      <!-- 오른쪽: 편집 -->
+           <!-- 오른쪽: 편집 -->
       <div class="editor-panel">
         <div class="editor-header">
           <div class="editor-title-wrap">
-            <div class="editor-label">ACTIVE MACRO</div>
+            <!-- 윗줄: 라벨 + 톤 -->
+            <div class="editor-top-row">
+              <div class="editor-label">ACTIVE MACRO</div>
+              <div class="tone-controls">
+                <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
+                <button type="button" class="tone-pill" data-value="차분">차분</button>
+              </div>
+            </div>
+
+            <!-- 둘째 줄: 제목/카테고리 -->
             <div class="editor-title-line">
-              <div id="editorTitle"> </div>
-              <div id="editorCategory" style="display:none;"></div>
+              <div id="editorTitle" class="editor-title-text"></div>
+              <div id="editorCategory" class="editor-category-pill" style="display:none;"></div>
             </div>
 
+            <!-- 셋째 줄: 스니펫 버튼 (머리말/사과/꼬리말) -->
             <div class="snippet-controls">
-              <span class="snippet-label"></span>
-              <button type="button" class="snippet-btn" data-snippet="header">
-                <span class="icon"></span><span>머리말</span>
-              </button>
-              <button type="button" class="snippet-btn" data-snippet="apology">
-                <span class="icon"></span><span>사과</span>
-              </button>
-              <button type="button" class="snippet-btn" data-snippet="footer">
-                <span class="icon"></span><span>꼬리말</span>
-              </button>
-            </div>
-
-            <div class="tone-controls">
-              <span class="tone-label">톤:</span>
-              <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
-              <button type="button" class="tone-pill" data-value="차분">차분</button>
+              <button type="button" class="snippet-btn" data-snippet="header">머리말</button>
+              <button type="button" class="snippet-btn" data-snippet="apology">사과</button>
+              <button type="button" class="snippet-btn" data-snippet="footer">꼬리말</button>
             </div>
           </div>
+
+          <!-- 우측: 버튼들만 심플하게 -->
           <div class="editor-actions">
             <button id="editorCopyBtn" class="copy-main" type="button">
               <span class="icon">📋</span>
               <span>복사</span>
             </button>
-
-            <button id="editorPolishBtn" class="send-polish-btn" type="button">
+            <button id="editorPolishBtn" class="secondary-btn" type="button">
               <span class="icon">✨</span>
               <span>AI로 다듬기</span>
             </button>
+            <button id="editorResetBtn" class="ghost-btn" type="button" disabled>원본</button>
+          </div>
+        </div>
 
-            <button id="editorResetBtn" class="reset-btn" type="button" disabled>🔙</button>
+        <!-- 새 기능: 고객 문의 → 답변 생성 -->
+        <div class="answer-row">
+          <textarea
+            id="questionTextarea"
+            class="question-textarea"
+            placeholder="고객님이 남긴 문의 내용을 붙여넣고, ‘답변 생성’ 버튼을 눌러주세요."
+          ></textarea>
+          <div class="answer-side">
+            <button id="editorAnswerBtn" class="answer-btn" type="button">
+              <span class="icon">🤖</span>
+              <span>답변 생성</span>
+            </button>
+            <p class="answer-hint">
+              • 위 문의 내용을 바탕으로<br />
+              • 현재 선택된 톤(발랄/차분)에 맞춰<br />
+              • 아래 편집창에 바로 붙여 넣어줘요.
+            </p>
           </div>
         </div>
 
         <textarea
           id="editorTextarea"
           class="editor-textarea"
-          placeholder="작성란란"
+          placeholder="여기에 사용할 멘트를 편집해 주세요."
         ></textarea>
 
         <div class="editor-footer">
@@ -831,8 +725,7 @@
           <span id="charCount">0자</span>
         </div>
       </div>
-    </div>
-  </div>
+
 
   <!-- 토스트 -->
   <div id="toast" class="toast">복사</div>
@@ -958,6 +851,9 @@
     const previewBubbleEl = document.getElementById("previewBubble");
     const previewTitleTextEl = document.getElementById("previewTitleText");
     const previewBodyTextEl = document.getElementById("previewBodyText");
+
+    const questionTextarea = document.getElementById("questionTextarea");
+    const editorAnswerBtn = document.getElementById("editorAnswerBtn");
 
     const sheetOpenBtn = document.getElementById("sheetOpenBtn");
     const snippetButtons = document.querySelectorAll(".snippet-btn");
@@ -1411,9 +1307,125 @@ ${text}
         editorPolishBtn.innerText = "AI로 다듬기";
       }
     });
+    // === 18) 고객 문의 → 답변 생성 ===
+    editorAnswerBtn.addEventListener("click", async () => {
+      const question = (questionTextarea.value || "").trim();
+      if (!question) {
+        alert("고객님이 남긴 문의 내용을 먼저 입력해 주세요.");
+        return;
+      }
+
+      const tone = getActiveTone(); // "발랄" 또는 "차분"
+
+      if (!OPENAI_API_KEY) {
+        const key = prompt(
+          "OpenAI API 키를 입력해주세요.\n(이 키는 파일에 저장되지 않고, 이 브라우저에서만 일시적으로 사용됩니다)"
+        );
+        if (!key) {
+          alert("API 키를 입력하지 않으면 사용할 수 없습니다.");
+          return;
+        }
+        OPENAI_API_KEY = key.trim();
+      }
+
+      editorAnswerBtn.disabled = true;
+      editorAnswerBtn.innerText = "생성 중...";
+
+      const toneInstructionForAnswer =
+        tone === "발랄"
+          ? `
+- 밝고 친근하지만, 상담사답게 단정한 말투.
+- '고객님'을 기본 호칭으로 사용한다.
+- 이모지는 쓸 수 있지만 2개 이내로 제한한다. (없어도 괜찮음)
+          `
+          : `
+- 최대한 차분하고 안정감 있는 톤.
+- 공감/안심/사과 문장을 1문장 이상 포함한다.
+- 이모지는 사용하지 않는다.
+          `;
+
+      const systemMessageForAnswer = `
+너는 화이트샌즈 고객센터 상담사야.
+
+[목표]
+- 고객이 남긴 문의 내용을 읽고, 채팅 상담에서 바로 쓸 수 있는 답변 멘트를 작성한다.
+- 한 번에 보낼 "한 덩어리"의 답변으로 만들어야 한다.
+
+[형식]
+- 각 문장 또는 의미 단위마다 줄바꿈(엔터)을 넣어, 모바일 채팅창에서 읽기 편하게 만든다.
+- 존댓말(요/입니다)만 사용한다.
+- 불필요한 인사(예: "좋은 하루 되세요~")는 한 번만, 과하지 않게 사용한다.
+- 머리말/꼬리말은 필요하면 자연스럽게 포함해도 되지만, 너무 길게 늘리지 않는다.
+
+[내용]
+- 고객이 궁금해하는 핵심을 먼저 짚고 바로 답해 준다.
+- 필요한 경우, 추가로 확인해야 할 정보(예: 주문번호, 연락처 등)를 정중하게 요청한다.
+- 조건/주의사항/처리 예상일 등 중요한 정보는 빼먹지 않게 또렷하게 적는다.
+
+[톤 규칙]
+${toneInstructionForAnswer}
+
+[주의]
+- 안내 멘트만 출력한다. (설명, 따옴표, 불릿 등은 붙이지 않는다.)
+      `.trim();
+
+      const userMessageForAnswer = `
+[고객 문의 내용]
+${question}
+      `.trim();
+
+      try {
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + OPENAI_API_KEY
+          },
+          body: JSON.stringify({
+            model: "gpt-4.1-mini",
+            messages: [
+              { role: "system", content: systemMessageForAnswer },
+              { role: "user", content: userMessageForAnswer }
+            ]
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.error) {
+          console.error("API 오류:", data.error);
+          alert("오류가 발생했습니다: " + data.error.message);
+        } else {
+          const answer = data.choices?.[0]?.message?.content?.trim();
+          if (answer) {
+            // 기존 내용이 있으면 덮어쓸지 물어보고, 없으면 바로 넣기
+            if (editorTextarea.value.trim()) {
+              const replace = confirm("편집창 내용을 새로 생성된 답변으로 교체할까요?");
+              if (replace) {
+                editorTextarea.value = answer;
+              } else {
+                editorTextarea.value = editorTextarea.value.replace(/\s*$/, "") + "\n\n" + answer;
+              }
+            } else {
+              editorTextarea.value = answer;
+            }
+            updateCharCount();
+            showToast("문의 답변을 생성했어요");
+          }
+        }
+      } catch (err) {
+        console.error("네트워크/요청 에러:", err);
+        alert("요청 중 오류가 발생했습니다: " + (err?.message || err));
+      } finally {
+        editorAnswerBtn.disabled = false;
+        editorAnswerBtn.innerText = "답변 생성";
+      }
+    });
 
     // 페이지 열리면 시트에서 데이터 불러오기
     loadMacrosFromSheet();
+
+    
   </script>
 </body>
 </html>
