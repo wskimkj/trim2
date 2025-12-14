@@ -1,1425 +1,301 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TEMPLETE</title>
-  <style>
-    * { box-sizing: border-box; }
-
-    body {
-      margin: 0;
-      padding: 24px;
-      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", system-ui, sans-serif;
-      background:
-        radial-gradient(circle at top left, #e0f2fe 0, transparent 50%),
-        radial-gradient(circle at bottom right, #f5d0fe 0, transparent 55%),
-        #f3f4f6;
-      display: flex;
-      justify-content: center;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 1280px;
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 26px;
-      box-shadow:
-        0 20px 60px rgba(15, 23, 42, 0.16),
-        0 0 0 1px rgba(148, 163, 184, 0.2);
-      padding: 20px 22px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      backdrop-filter: blur(16px);
-      height: calc(100vh - 48px);
-      min-height: 0;
-    }
-
-    .app-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 16px;
-      margin-bottom: 6px;
-      flex-shrink: 0;
-    }
-
-    .app-title-wrap {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .app-title-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .app-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: #111827;
-      letter-spacing: -0.01em;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* ⚡ 버튼 (구글시트 연결) */
-    .app-tag {
-      font-size: 11px;
-      padding: 3px 9px;
-      border-radius: 999px;
-      background: rgba(129, 140, 248, 0.08);
-      color: #4f46e5;
-      border: 1px solid rgba(129, 140, 248, 0.3);
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      box-shadow: 0 4px 12px rgba(129, 140, 248, 0.35);
-      cursor: pointer;
-      border: none;
-    }
-
-    /* =========================
-       ✅ 1) 좌/우 50% 비중
-       ========================= */
-    .app-body{
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* 50:50 */
-      gap: 16px;
-      flex: 1;
-      min-height: 0;
-    }
-
-    /* ---------- LEFT ---------- */
-    .left-panel {
-      min-width: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      min-height: 0;
-    }
-
-    .search-box {
-      display: flex;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .search-input {
-      flex: 1;
-      padding: 12px 18px;
-      border-radius: 999px;
-      border: 1px solid rgba(209, 213, 219, 0.8);
-      font-size: 14px;
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s, background-color 0.15s, transform 0.05s;
-      background: radial-gradient(circle at top left, #fdf2ff 0, #f9fafb 45%);
-      box-shadow:
-        0 0 0 1px rgba(255, 255, 255, 0.9),
-        0 10px 30px rgba(148, 163, 184, 0.2);
-    }
-
-    .search-input::placeholder { color: #9ca3af; }
-
-    .search-input:focus {
-      border-color: #a855f7;
-      box-shadow:
-        0 0 0 1px rgba(168, 85, 247, 0.7),
-        0 12px 32px rgba(129, 140, 248, 0.45);
-      background: #ffffff;
-      transform: translateY(-0.5px);
-    }
-
-    .search-button {
-      padding: 0 20px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(130deg, #6366f1, #a855f7);
-      color: #ffffff;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 14px 30px rgba(129, 140, 248, 0.55);
-      flex-shrink: 0;
-    }
-
-    .search-button:hover { opacity: 0.97; transform: translateY(-0.5px); }
-
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      flex-shrink: 0;
-    }
-
-    .result-count { font-size: 12px; color: #6b7280; }
-    .result-count strong { color: #4f46e5; }
-
-    /* 분류 필터 숨김 */
-    .category-filter { display: none; }
-
-    .type-filter {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #4b5563;
-      margin-top: 4px;
-    }
-
-    .type-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-      cursor: pointer;
-      font-size: 11px;
-    }
-    .type-pill input { margin: 0; }
-    .type-pill.active { border-color: #6366f1; background: #eef2ff; }
-
-    .list-panel {
-      border-radius: 20px;
-      background: linear-gradient(145deg, #f9fafb, #eef2ff);
-      padding: 10px 10px 10px 12px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      display: flex;
-      flex-direction: column;
-      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
-      min-height: 0;
-      position: relative;
-      flex: 1;
-    }
-
-    .list-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 6px;
-      flex-shrink: 0;
-    }
-
-    .list-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #4b5563;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .results {
-      flex: 1;
-      overflow: auto;
-      padding-right: 4px;
-      border-top: 1px solid #e5e7eb;
-      margin-top: 4px;
-    }
-
-    .macro-item {
-      padding: 10px 10px 10px 8px;
-      border-bottom: 1px dashed rgba(209, 213, 219, 0.9);
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-      cursor: pointer;
-      border-radius: 14px;
-      transition: background-color 0.12s, box-shadow 0.12s, transform 0.05s;
-    }
-
-    .macro-item:hover {
-      background: rgba(224, 231, 255, 0.85);
-      box-shadow:
-        0 1px 0 rgba(148, 163, 184, 0.7),
-        0 6px 16px rgba(129, 140, 248, 0.25);
-      transform: translateY(-1px);
-    }
-
-    .macro-item.active {
-      background: rgba(224, 231, 255, 1);
-      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
-    }
-
-    .macro-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .macro-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #111827;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .macro-category {
-      font-size: 10px;
-      border-radius: 999px;
-      padding: 2px 8px;
-      background: #eef2ff;
-      color: #4f46e5;
-      border: 1px solid rgba(129, 140, 248, 0.3);
-      font-weight: 600;
-    }
-
-    .macro-subtext {
-      font-size: 11px;
-      color: #6b7280;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      padding-right: 6px;
-    }
-
-    .empty-state {
-      padding: 24px 4px;
-      text-align: center;
-      color: #9ca3af;
-      font-size: 13px;
-    }
-
-    /* ---------- RIGHT ---------- */
-    .editor-panel {
-      border-radius: 20px;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      background: radial-gradient(circle at top left, #eef2ff, #f9fafb 55%);
-      padding: 12px 14px 14px;
-      box-shadow:
-        0 12px 30px rgba(148, 163, 184, 0.3),
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
-      min-height: 0;
-
-      display: grid;
-      grid-template-rows: auto 190px minmax(0, 1fr);
-      gap: 12px;
-    }
-
-    /* 헤더: 제목/톤 + 머리말/사과/꼬리말(새 UI) */
-    .editor-header{
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      flex-shrink: 0;
-      padding-bottom: 10px;
-      border-bottom: 1px solid rgba(209, 213, 219, 0.7);
-    }
-
-    .header-top{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .header-left{
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      min-width: 240px;
-      flex: 1;
-    }
-
-    .editor-label {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: #9ca3af;
-    }
-
-    .editor-title-line {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .editor-title-text {
-      font-size: 14px;
-      font-weight: 800;
-      color: #111827;
-    }
-
-    .editor-category-pill {
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 2px 9px;
-      background: rgba(79, 70, 229, 0.08);
-      color: #4f46e5;
-      border: 1px solid rgba(129, 140, 248, 0.4);
-      font-weight: 700;
-    }
-
-    .tone-controls{
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      flex-shrink: 0;
-    }
-
-    .tone-pill {
-      padding: 6px 12px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: rgba(255,255,255,0.85);
-      font-size: 12px;
-      cursor: pointer;
-      color: #4b5563;
-      white-space: nowrap;
-      font-weight: 700;
-    }
-
-    .tone-pill.active {
-      border-color: #6366f1;
-      background: #eef2ff;
-      color: #3730a3;
-      box-shadow: 0 8px 18px rgba(129, 140, 248, 0.25);
-    }
-
-    /* ✅ 4) 머리말/사과/꼬리말 새 UI (퀵 버튼) */
-    .quick-insert{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: space-between;
-    }
-
-    .quick-left{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .quick-btn{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 12px;
-      border-radius: 14px; /* 알약 말고 '카드 버튼' 느낌 */
-      border: 1px solid rgba(148, 163, 184, 0.8);
-      background: rgba(255,255,255,0.92);
-      cursor: pointer;
-      font-size: 12px;
-      font-weight: 800;
-      color: #374151;
-      box-shadow: 0 10px 20px rgba(148,163,184,0.14);
-      white-space: nowrap;
-    }
-
-    .quick-btn:hover{
-      transform: translateY(-0.5px);
-      background: rgba(224,231,255,0.7);
-      border-color: rgba(129,140,248,0.8);
-    }
-
-    .quick-ico{
-      width: 26px;
-      height: 26px;
-      border-radius: 10px;
-      display: grid;
-      place-items: center;
-      font-size: 14px;
-      background: rgba(99, 102, 241, 0.10);
-      border: 1px solid rgba(99, 102, 241, 0.20);
-    }
-
-    .meta-right{
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      color: #9ca3af;
-      font-size: 11px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-
-    .meta-right strong{
-      color: #6b7280;
-    }
-
-    /* 상단 박스: 문의 → 답변 생성 */
-    .answer-row {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) auto;
-      gap: 10px;
-
-      border-radius: 18px;
-      padding: 12px;
-      background: rgba(255,255,255,0.98);
-      border: 1px solid rgba(148,163,184,0.8);
-      box-shadow: 0 10px 22px rgba(148, 163, 184, 0.18);
-
-      min-height: 0;
-    }
-
-    .question-textarea {
-      width: 100%;
-      border: 1px solid rgba(209, 213, 219, 0.9);
-      outline: none;
-      resize: none;
-      min-height: 120px;
-      max-height: 220px;
-      font-family: inherit;
-      font-size: 12px;
-      line-height: 1.55;
-      background: rgba(249,250,251,0.9);
-      border-radius: 14px;
-      padding: 10px 11px;
-    }
-
-    .answer-side {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      justify-content: flex-end;
-      gap: 8px;
-    }
-
-    .primary-btn {
-      padding: 10px 14px;
-      border-radius: 999px;
-      border: none;
-      background: linear-gradient(130deg, #6366f1, #a855f7);
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      white-space: nowrap;
-      box-shadow: 0 12px 24px rgba(129, 140, 248, 0.45);
-    }
-    .primary-btn:hover { opacity: 0.97; transform: translateY(-0.5px); }
-
-    /* 하단: 편집창 + 하단 액션바(✅ 2) AI 버튼 여기로) */
-    .editor-wrap{
-      display: grid;
-      grid-template-rows: minmax(0, 1fr) auto;
-      gap: 10px;
-      min-height: 0;
-    }
-
-    .editor-textarea {
-      width: 100%;
-      resize: none;
-      border-radius: 18px;
-      border: 1px solid rgba(148, 163, 184, 0.9);
-      padding: 14px;
-      font-family: inherit;
-      font-size: 13px;
-      line-height: 1.6;
-      outline: none;
-      background: rgba(255, 255, 255, 0.98);
-      box-shadow:
-        inset 0 1px 2px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(255, 255, 255, 0.7);
-      overflow-y: auto;
-      min-height: 0;
-    }
-
-    .editor-textarea:focus {
-      border-color: #6366f1;
-      box-shadow:
-        inset 0 1px 2px rgba(15, 23, 42, 0.08),
-        0 0 0 1px rgba(129, 140, 248, 0.7);
-    }
-
-    .editor-actions-bottom{
-      display: flex;
-      justify-content: flex-end;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    /* ✅ AI 다듬기 버튼: 답변 생성 느낌(같은 primary 스타일) */
-    .polish-btn{
-      background: linear-gradient(130deg, #6366f1, #a855f7);
-    }
-
-    /* 토스트 */
-    .toast {
-      position: fixed;
-      left: 50%;
-      bottom: 24px;
-      transform: translateX(-50%);
-      background: #111827;
-      color: #ffffff;
-      font-size: 13px;
-      padding: 8px 14px;
-      border-radius: 999px;
-      box-shadow: 0 10px 25px rgba(15, 23, 42, 0.35);
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.18s ease-out, transform 0.18s ease-out;
-      z-index: 9999;
-    }
-
-    .toast.show {
-      opacity: 1;
-      transform: translateX(-50%) translateY(-4px);
-    }
-
-    /* 미리보기 버블 */
-    .preview-bubble {
-      position: absolute;
-      top: 60px;
-      left: calc(100% + 14px);
-      width: 260px;
-      max-height: 200px;
-      background: radial-gradient(circle at top left, rgba(244, 244, 255, 0.98), rgba(250, 250, 255, 0.96));
-      color: #111827;
-      border-radius: 18px;
-      padding: 10px 12px;
-      box-shadow:
-        0 20px 45px rgba(129, 140, 248, 0.45),
-        0 0 0 1px rgba(196, 181, 253, 0.9);
-      font-size: 12px;
-      backdrop-filter: blur(18px);
-      z-index: 20;
-      display: none;
-      transition: opacity 0.15s ease-out, transform 0.15s ease-out;
-    }
-
-    .preview-bubble.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .preview-title {
-      font-weight: 700;
-      margin-bottom: 6px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 12px;
-      color: #4b5563;
-    }
-
-    .preview-body {
-      font-size: 12px;
-      line-height: 1.5;
-      max-height: 150px;
-      overflow: auto;
-      white-space: pre-wrap;
-      color: #374151;
-    }
-
-    @media (max-width: 900px) {
-      body { padding: 12px; }
-      .app { padding: 16px 14px 16px; height: auto; }
-
-      .app-body { grid-template-columns: 1fr; }
-
-      .editor-panel { grid-template-rows: auto auto minmax(260px, 1fr); }
-
-      .answer-row { grid-template-columns: 1fr; }
-      .answer-side { align-items: flex-start; }
-
-      .preview-bubble {
-        position: fixed;
-        right: 16px;
-        left: 16px;
-        top: auto;
-        bottom: 80px;
-        max-width: none;
-      }
-
-      .editor-actions-bottom{ justify-content: stretch; }
-      .primary-btn{ width: 100%; justify-content: center; }
-    }
-  </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>템플</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:24px;
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+  background:#f3f4f6;
+}
+.app{
+  max-width:1280px;
+  margin:0 auto;
+  height:calc(100vh - 48px);
+  background:#fff;
+  border-radius:24px;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+}
+.app-body{
+  flex:1;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+  min-height:0;
+}
+
+/* LEFT */
+.left-panel{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+  min-height:0;
+}
+.list-panel{
+  flex:1;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  padding:10px;
+  overflow:auto;
+}
+.macro-item{
+  padding:10px;
+  border-bottom:1px dashed #e5e7eb;
+  cursor:pointer;
+}
+.macro-item:hover{background:#eef2ff}
+.macro-item.active{
+  background:#e0e7ff;
+  font-weight:700;
+}
+
+/* RIGHT */
+.editor-panel{
+  display:grid;
+  grid-template-rows:auto 180px minmax(0,1fr);
+  gap:12px;
+  border:1px solid #e5e7eb;
+  border-radius:18px;
+  padding:14px;
+  background:#f9fafb;
+  min-height:0;
+}
+
+/* HEADER */
+.editor-header{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  padding-bottom:10px;
+  border-bottom:1px solid #e5e7eb;
+}
+.header-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+.editor-title{
+  font-size:14px;
+  font-weight:800;
+}
+.tone-controls button{
+  padding:6px 12px;
+  border-radius:999px;
+  border:1px solid #d1d5db;
+  background:#fff;
+  cursor:pointer;
+  font-weight:700;
+}
+.tone-controls .active{
+  background:#eef2ff;
+  border-color:#6366f1;
+}
+
+/* ✅ 머리말/사과/꼬리말 라디오 UI */
+.snippet-radio-group{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  font-size:12px;
+}
+.snippet-label{
+  font-weight:700;
+  color:#6b7280;
+}
+.snippet-radio{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  cursor:pointer;
+  user-select:none;
+  font-weight:700;
+}
+.snippet-radio input{
+  appearance:none;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  border:2px solid #d1d5db;
+  position:relative;
+}
+.snippet-radio.active input{
+  border-color:#6366f1;
+}
+.snippet-radio.active input::after{
+  content:"";
+  width:4px;
+  height:4px;
+  background:#6366f1;
+  border-radius:50%;
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+}
+
+/* 문의 */
+.answer-row{
+  border:1px solid #e5e7eb;
+  border-radius:14px;
+  padding:10px;
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:10px;
+}
+.answer-row textarea{
+  resize:none;
+  border:1px solid #d1d5db;
+  border-radius:12px;
+  padding:10px;
+}
+.primary-btn{
+  align-self:flex-end;
+  padding:10px 14px;
+  border-radius:999px;
+  border:none;
+  background:linear-gradient(130deg,#6366f1,#a855f7);
+  color:#fff;
+  font-weight:800;
+  cursor:pointer;
+}
+
+/* 편집 */
+.editor-wrap{
+  display:grid;
+  grid-template-rows:1fr auto;
+  gap:10px;
+  min-height:0;
+}
+.editor-textarea{
+  resize:none;
+  border-radius:14px;
+  border:1px solid #d1d5db;
+  padding:12px;
+  font-size:13px;
+}
+</style>
 </head>
+
 <body>
-  <div class="app">
-    <div class="app-header">
-      <div class="app-title-wrap">
-        <div class="app-title-row">
-          <div class="app-title">템플</div>
-          <button id="sheetOpenBtn" class="app-tag" type="button" title="Google Sheets 열기">
-            <span>⚡</span>
-          </button>
-        </div>
-      </div>
+<div class="app">
+  <div class="app-body">
+
+    <!-- LEFT -->
+    <div class="left-panel">
+      <div class="list-panel" id="results"></div>
     </div>
 
-    <div class="app-body">
-      <!-- LEFT -->
-      <div class="left-panel">
-        <div class="search-box">
-          <input id="searchInput" class="search-input" type="text" placeholder=" (예: 배송, 교환 등)" />
-          <button id="searchButton" class="search-button" type="button">
-            <span class="icon">🔍</span>
-            <span>검색</span>
-          </button>
-        </div>
+    <!-- RIGHT -->
+    <div class="editor-panel">
 
-        <div class="top-row">
-          <div>
-            <div id="resultCount" class="result-count">총 <strong>0</strong>개</div>
-            <div class="type-filter">
-              구분:
-              <label class="type-pill active">
-                <input type="radio" name="typeFilter" value="" checked />
-                전체
-              </label>
-              <label class="type-pill">
-                <input type="radio" name="typeFilter" value="통합" />
-                통합
-              </label>
-              <label class="type-pill">
-                <input type="radio" name="typeFilter" value="알림톡" />
-                톡
-              </label>
-              <label class="type-pill">
-                <input type="radio" name="typeFilter" value="채팅" />
-                채팅
-              </label>
-              <label class="type-pill">
-                <input type="radio" name="typeFilter" value="FAQ" />
-                FAQ
-              </label>
-            </div>
-          </div>
-
-          <div class="category-filter">
-            분류:
-            <select id="categorySelect" class="category-select">
-              <option value="">전체</option>
-            </select>
+      <!-- HEADER -->
+      <div class="editor-header">
+        <div class="header-top">
+          <div class="editor-title" id="editorTitle">메크로 선택</div>
+          <div class="tone-controls">
+            <button class="tone active">발랄</button>
+            <button class="tone">차분</button>
           </div>
         </div>
 
-        <div class="list-panel">
-          <div class="list-header">
-            <div class="list-title">
-              <span class="icon">📚</span>
-              ㅣLIST
-            </div>
-          </div>
+        <!-- ✅ 라디오 삽입 -->
+        <div class="snippet-radio-group">
+          <span class="snippet-label">문구 삽입</span>
 
-          <div id="previewBubble" class="preview-bubble">
-            <div class="preview-title">
-              <span class="icon">👀</span>
-              <span id="previewTitleText">미리보기</span>
-            </div>
-            <div id="previewBodyText" class="preview-body"></div>
-          </div>
+          <label class="snippet-radio active">
+            <input type="radio" name="snippet" value="header" checked />
+            머리말
+          </label>
 
-          <div id="results" class="results"></div>
+          <label class="snippet-radio">
+            <input type="radio" name="snippet" value="apology" />
+            사과
+          </label>
+
+          <label class="snippet-radio">
+            <input type="radio" name="snippet" value="footer" />
+            꼬리말
+          </label>
         </div>
       </div>
 
-      <!-- RIGHT -->
-      <div class="editor-panel">
-
-        <div class="editor-header">
-          <div class="header-top">
-            <div class="header-left">
-              <div class="editor-label">ACTIVE MACRO</div>
-              <div class="editor-title-line">
-                <div id="editorTitle" class="editor-title-text"></div>
-                <div id="editorCategory" class="editor-category-pill" style="display:none;"></div>
-              </div>
-            </div>
-
-            <div class="tone-controls">
-              <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
-              <button type="button" class="tone-pill" data-value="차분">차분</button>
-            </div>
-          </div>
-
-          <!-- ✅ 새 퀵버튼(머리말/사과/꼬리말) + 메타/글자수 -->
-          <div class="quick-insert">
-            <div class="quick-left">
-              <button type="button" class="quick-btn snippet-btn" data-snippet="header" title="머리말 추가">
-                <span class="quick-ico">👋</span>
-                <span>머리말</span>
-              </button>
-              <button type="button" class="quick-btn snippet-btn" data-snippet="apology" title="사과 문구 추가">
-                <span class="quick-ico">🙏</span>
-                <span>사과</span>
-              </button>
-              <button type="button" class="quick-btn snippet-btn" data-snippet="footer" title="꼬리말 추가">
-                <span class="quick-ico">✅</span>
-                <span>꼬리말</span>
-              </button>
-            </div>
-
-            <div class="meta-right">
-              <span id="editorMeta">선택된 메크로 없음</span>
-              <span><strong id="charCount">0</strong>자</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 문의 → 답변 생성 -->
-        <div class="answer-row">
-          <textarea id="questionTextarea" class="question-textarea" placeholder="버튼을 눌러주세요."></textarea>
-          <div class="answer-side">
-            <button id="editorAnswerBtn" class="primary-btn" type="button">
-              <span class="icon">🤖</span>
-              <span>답변 생성</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- 편집 영역 + 하단 AI 버튼 -->
-        <div class="editor-wrap">
-          <textarea id="editorTextarea" class="editor-textarea" placeholder="편집해 주세요."></textarea>
-
-          <div class="editor-actions-bottom">
-            <!-- ✅ 2) AI로 다듬기 버튼을 편집영역 아래로 이동 -->
-            <button id="editorPolishBtn" class="primary-btn polish-btn" type="button">
-              <span class="icon">✨</span>
-              <span>AI로 다듬기</span>
-            </button>
-          </div>
-        </div>
-
+      <!-- 문의 -->
+      <div class="answer-row">
+        <textarea placeholder="고객 문의"></textarea>
+        <button class="primary-btn">답변 생성</button>
       </div>
+
+      <!-- 편집 -->
+      <div class="editor-wrap">
+        <textarea id="editorTextarea" class="editor-textarea" placeholder="편집해 주세요"></textarea>
+        <button class="primary-btn">AI로 다듬기</button>
+      </div>
+
     </div>
   </div>
-
-  <div id="toast" class="toast">복사</div>
-
-  <script>
-    // === 공통: 토스트 ===
-    const toastEl = document.getElementById("toast");
-    let toastTimer = null;
-    function showToast(message) {
-      toastEl.textContent = message || "완료";
-      toastEl.classList.add("show");
-      if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1500);
-    }
-
-    // === 1) 구글 시트 설정값 ===
-    const SHEET_ID = "1_L12NKkBVU4c5xDPrYLUQRnSUG2NoAwYGWIfPDVO3bM";
-    const SHEET_GID = "1260123292";
-    const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${SHEET_GID}`;
-    const SHEET_LINK = "https://docs.google.com/spreadsheets/d/1_L12NKkBVU4c5xDPrYLUQRnSUG2NoAwYGWIfPDVO3bM/edit?gid=1260123292#gid=1260123292";
-
-    const DEFAULT_HEADER = "안녕하세요 화이트샌즈입니다.";
-    const DEFAULT_FOOTER = "화이트샌즈를 찾아주셔서 감사드립니다.";
-    const DEFAULT_APOLOGY = "더 좋은 상품과 서비스로 찾아뵙겠습니다.\n\n감사합니다.";
-
-    let macros = [];
-    let filteredMacros = [];
-    let activeMacro = null;
-
-    let OPENAI_API_KEY = "";
-
-    // === 2) CSV 파서 ===
-    function parseCSV(text) {
-      const rows = [];
-      let row = [];
-      let cur = "";
-      let insideQuotes = false;
-
-      for (let i = 0; i < text.length; i++) {
-        const char = text[i];
-        const next = text[i + 1];
-
-        if (char === '"' && insideQuotes && next === '"') {
-          cur += '"';
-          i++;
-        } else if (char === '"') {
-          insideQuotes = !insideQuotes;
-        } else if (char === "," && !insideQuotes) {
-          row.push(cur);
-          cur = "";
-        } else if ((char === "\n" || char === "\r") && !insideQuotes) {
-          if (cur.length > 0 || row.length > 0) {
-            row.push(cur);
-            rows.push(row);
-            row = [];
-            cur = "";
-          }
-        } else {
-          cur += char;
-        }
-      }
-      if (cur.length > 0 || row.length > 0) {
-        row.push(cur);
-        rows.push(row);
-      }
-      return rows;
-    }
-
-    // === 3) 구글 시트에서 데이터 로드 ===
-    async function loadMacrosFromSheet() {
-      try {
-        const res = await fetch(CSV_URL);
-        const text = await res.text();
-        const rows = parseCSV(text);
-        const dataRows = rows.slice(1);
-
-        macros = dataRows
-          .map((cols, idx) => {
-            const major = (cols[0] || "").trim();
-            const minor = (cols[1] || "").trim();
-            const content = (cols[2] || "").trim();
-            const typeTag = (cols[3] || "").trim();
-
-            if (!major && !minor && !content) return null;
-
-            return {
-              id: `macro-${idx}`,
-              title: major,
-              category: minor,
-              content,
-              typeTag,
-            };
-          })
-          .filter(Boolean);
-
-        filteredMacros = macros.slice();
-        initCategoryOptions();
-        renderResults(filteredMacros);
-      } catch (e) {
-        console.error(e);
-        alert("구글 시트 데이터를 불러오지 못했습니다. 공유 설정과 URL을 다시 확인해주세요.");
-      }
-    }
-
-    // === 4) DOM 요소 ===
-    const searchInput = document.getElementById("searchInput");
-    const searchButton = document.getElementById("searchButton");
-    const resultsEl = document.getElementById("results");
-    const resultCountEl = document.getElementById("resultCount");
-    const categorySelect = document.getElementById("categorySelect");
-
-    const editorTitleEl = document.getElementById("editorTitle");
-    const editorCategoryEl = document.getElementById("editorCategory");
-    const editorTextarea = document.getElementById("editorTextarea");
-    const editorMetaEl = document.getElementById("editorMeta");
-    const charCountEl = document.getElementById("charCount");
-    const editorPolishBtn = document.getElementById("editorPolishBtn");
-
-    const previewBubbleEl = document.getElementById("previewBubble");
-    const previewTitleTextEl = document.getElementById("previewTitleText");
-    const previewBodyTextEl = document.getElementById("previewBodyText");
-
-    const questionTextarea = document.getElementById("questionTextarea");
-    const editorAnswerBtn = document.getElementById("editorAnswerBtn");
-
-    const sheetOpenBtn = document.getElementById("sheetOpenBtn");
-    const snippetButtons = document.querySelectorAll(".snippet-btn");
-
-    const listPanelElRef = document.querySelector(".list-panel");
-    const typeFilterRadios = document.querySelectorAll('input[name="typeFilter"]');
-    const typeFilterLabels = document.querySelectorAll(".type-pill");
-
-    const toneButtons = document.querySelectorAll(".tone-pill");
-
-    // === 5) 시트 열기 버튼 (⚡) ===
-    sheetOpenBtn.addEventListener("click", () => {
-      window.open(SHEET_LINK, "_blank", "noopener");
-    });
-
-    // === 6) 카테고리 옵션 생성 ===
-    function initCategoryOptions() {
-      while (categorySelect.options.length > 1) {
-        categorySelect.remove(1);
-      }
-
-      const categories = Array.from(
-        new Set(
-          macros
-            .map((m) => (m.category || "").trim())
-            .filter((c) => c.length > 0)
-        )
-      ).sort();
-
-      categories.forEach((cat) => {
-        const opt = document.createElement("option");
-        opt.value = cat;
-        opt.textContent = cat;
-        categorySelect.appendChild(opt);
-      });
-    }
-
-    // === 7) 검색 & 필터 ===
-    function searchMacros() {
-      const query = searchInput.value.trim().toLowerCase();
-      const selectedCategory = categorySelect.value;
-      const selectedTypeRadio = document.querySelector('input[name="typeFilter"]:checked');
-      const selectedType = selectedTypeRadio ? selectedTypeRadio.value : "";
-
-      filteredMacros = macros;
-
-      if (selectedCategory) {
-        filteredMacros = filteredMacros.filter(
-          (m) => (m.category || "").trim() === selectedCategory
-        );
-      }
-
-      if (selectedType) {
-        filteredMacros = filteredMacros.filter(
-          (m) => (m.typeTag || "").trim() === selectedType
-        );
-      }
-
-      if (query) {
-        filteredMacros = filteredMacros.filter((m) => {
-          const title = (m.title || "").toLowerCase();
-          const category = (m.category || "").toLowerCase();
-          const content = (m.content || "").toLowerCase();
-          return (
-            title.includes(query) ||
-            category.includes(query) ||
-            content.includes(query)
-          );
-        });
-      }
-
-      renderResults(filteredMacros);
-      hidePreview();
-    }
-
-    // === 8) 리스트 렌더링 (✅ 3) 원본/복사 UI 제거: miniCopy 삭제) ===
-    function renderResults(list) {
-      resultsEl.innerHTML = "";
-      resultCountEl.innerHTML = `총 <strong>${list.length}</strong>개 메크로`;
-
-      if (list.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "empty-state";
-        empty.textContent = "검색 결과가 없습니다. 키워드를 바꿔서 다시 시도해 주세요.";
-        resultsEl.appendChild(empty);
-        return;
-      }
-
-      list.forEach((macro) => {
-        const item = document.createElement("div");
-        item.className = "macro-item";
-        item.dataset.id = macro.id;
-
-        if (activeMacro && activeMacro.id === macro.id) {
-          item.classList.add("active");
-        }
-
-        const header = document.createElement("div");
-        header.className = "macro-header";
-
-        const titleWrap = document.createElement("div");
-        titleWrap.className = "macro-title";
-        titleWrap.textContent = macro.title || "(대분류 없음)";
-
-        if (macro.category) {
-          const cat = document.createElement("span");
-          cat.className = "macro-category";
-          cat.textContent = macro.category;
-          titleWrap.appendChild(cat);
-        }
-
-        header.appendChild(titleWrap);
-
-        const sub = document.createElement("div");
-        sub.className = "macro-subtext";
-        const stripped = (macro.content || "").replace(/\s+/g, " ");
-        sub.textContent = stripped.slice(0, 60) + (stripped.length > 60 ? "…" : "");
-
-        item.appendChild(header);
-        item.appendChild(sub);
-
-        item.addEventListener("click", () => {
-          selectMacro(macro);
-          document.querySelectorAll(".macro-item").forEach((el) => el.classList.remove("active"));
-          item.classList.add("active");
-        });
-
-        item.addEventListener("mouseenter", () => showPreview(macro, item));
-        item.addEventListener("mouseleave", () => hidePreview());
-
-        resultsEl.appendChild(item);
-      });
-    }
-
-    resultsEl.addEventListener("mouseleave", hidePreview);
-
-    // === 9) 메크로 선택 → 편집창으로 로드 ===
-    function selectMacro(macro) {
-      activeMacro = { ...macro };
-
-      editorTitleEl.textContent = activeMacro.title || "(대분류 없음)";
-      if (activeMacro.category) {
-        editorCategoryEl.textContent = activeMacro.category;
-        editorCategoryEl.style.display = "inline-block";
-      } else {
-        editorCategoryEl.style.display = "none";
-      }
-
-      editorTextarea.disabled = false;
-      editorPolishBtn.disabled = false;
-
-      editorTextarea.value = activeMacro.content || "";
-      updateCharCount();
-
-      if (activeMacro.typeTag) {
-        editorMetaEl.textContent = `구분: ${activeMacro.typeTag}`;
-      } else {
-        editorMetaEl.textContent = "선택된 메크로 편집 중";
-      }
-    }
-
-    // === 10) 글자수 표시 ===
-    function updateCharCount() {
-      const len = editorTextarea.value.length;
-      charCountEl.textContent = `${len}`;
-    }
-    editorTextarea.addEventListener("input", updateCharCount);
-
-    // === 11) 미리보기 버블 ===
-    function showPreview(macro, anchorEl) {
-      if (!macro || !macro.content || !anchorEl) {
-        hidePreview();
-        return;
-      }
-      previewTitleTextEl.textContent = macro.title || "미리보기";
-      previewBodyTextEl.textContent = macro.content;
-
-      previewBubbleEl.style.display = "block";
-      previewBubbleEl.style.opacity = "0";
-
-      const anchorRect = anchorEl.getBoundingClientRect();
-      const panelRect = listPanelElRef.getBoundingClientRect();
-      const bubbleHeight = previewBubbleEl.offsetHeight || 160;
-
-      let top =
-        anchorRect.top -
-        panelRect.top +
-        anchorRect.height / 2 -
-        bubbleHeight / 2;
-
-      const minTop = 40;
-      const maxTop = listPanelElRef.clientHeight - bubbleHeight - 16;
-      top = Math.max(minTop, Math.min(top, maxTop));
-
-      previewBubbleEl.style.top = `${top}px`;
-      previewBubbleEl.style.opacity = "1";
-      previewBubbleEl.classList.add("visible");
-    }
-
-    function hidePreview() {
-      previewBubbleEl.classList.remove("visible");
-      previewBubbleEl.style.display = "none";
-    }
-
-    // === 12) 스니펫 버튼 ===
-    function applySnippet(type) {
-      if (editorTextarea.disabled) return;
-
-      let text = editorTextarea.value || "";
-      const trimmed = text.trim();
-
-      if (type === "header") {
-        if (trimmed.startsWith(DEFAULT_HEADER)) {
-          showToast("이미 머리말이 있어요");
-          return;
-        }
-        const body = text.replace(/^\s+/, "");
-        editorTextarea.value = DEFAULT_HEADER + (body ? "\n\n" + body : "");
-      } else if (type === "footer") {
-        if (trimmed.endsWith(DEFAULT_FOOTER)) {
-          showToast("이미 꼬리말이 있어요");
-          return;
-        }
-        const withoutTrailing = text.replace(/\s+$/, "");
-        editorTextarea.value = (withoutTrailing ? withoutTrailing + "\n\n" : "") + DEFAULT_FOOTER;
-      } else if (type === "apology") {
-        if (trimmed.includes("더 좋은 상품과 서비스로 찾아뵙겠습니다")) {
-          showToast("이미 사과 문구가 있어요");
-          return;
-        }
-        const withoutTrailing = text.replace(/\s+$/, "");
-        editorTextarea.value = (withoutTrailing ? withoutTrailing + "\n\n" : "") + DEFAULT_APOLOGY;
-      }
-
-      updateCharCount();
-    }
-
-    snippetButtons.forEach((btn) => {
-      btn.addEventListener("click", () => applySnippet(btn.dataset.snippet));
-    });
-
-    // === 13) 타입 필터 ===
-    searchButton.addEventListener("click", searchMacros);
-    searchInput.addEventListener("keydown", (e) => {
-      if (e.key === "Enter") searchMacros();
-    });
-    categorySelect.addEventListener("change", searchMacros);
-
-    typeFilterRadios.forEach((radio) => {
-      radio.addEventListener("change", () => {
-        typeFilterLabels.forEach((label) => label.classList.remove("active"));
-        const selected = document.querySelector('input[name="typeFilter"]:checked');
-        if (selected) {
-          const label = selected.closest(".type-pill");
-          if (label) label.classList.add("active");
-        }
-        searchMacros();
-      });
-    });
-
-    // === 14) 톤 모드 토글 ===
-    function setupToneToggle() {
-      toneButtons.forEach(btn => {
-        btn.addEventListener("click", () => {
-          toneButtons.forEach(b => b.classList.remove("active"));
-          btn.classList.add("active");
-        });
-      });
-    }
-
-    function getActiveTone() {
-      const active = Array.from(toneButtons).find(b => b.classList.contains("active"));
-      return active ? active.getAttribute("data-value") : "발랄";
-    }
-
-    setupToneToggle();
-
-    // === 15) AI로 다듬기 (✅ 2) 버튼 위치만 변경, 기능 동일) ===
-    editorPolishBtn.addEventListener("click", async () => {
-      if (editorTextarea.disabled) return;
-
-      const text = editorTextarea.value.trim();
-      if (!text) {
-        alert("다듬을 문장이 없습니다.");
-        return;
-      }
-
-      const tone = getActiveTone(); // "발랄" 또는 "차분"
-
-      if (!OPENAI_API_KEY) {
-        const key = prompt(
-          "OpenAI API 키를 입력해주세요.\n(이 키는 파일에 저장되지 않고, 이 브라우저에서만 일시적으로 사용됩니다)"
-        );
-        if (!key) {
-          alert("API 키를 입력하지 않으면 사용할 수 없습니다.");
-          return;
-        }
-        OPENAI_API_KEY = key.trim();
-      }
-
-      editorPolishBtn.disabled = true;
-      editorPolishBtn.innerText = "다듬는 중...";
-
-      const toneInstruction =
-        tone === "발랄"
-          ? `
-- 톤: 발랄
-- 토스 고객센터처럼 단정하지만 친근한 말투.
-- '고객님', '도와드리다', '확인해보고 안내드리다' 같은 표현 중심.
-- 이모지는 😊🙂✨💬💡✅ 정도를 자연스럽게 사용할 수 있지만, 말보다 많아지지 않게.
-- 'ㅋㅋ', 'ㅎㅎ', 과한 반말·장난스러운 어투는 사용하지 않는다.
-          `
-          : `
-- 톤: 차분
-- 예민하거나 불편함을 느끼는 고객님을 상대한다고 가정한다.
-- 공감·사과 표현을 1문장 이상 자연스럽게 포함한다.
-- 이모지는 사용하지 않거나, 정말 필요한 경우에만 1개 이내로 제한한다.
-          `;
-
-      const systemMessage = `
-너는 고객 상담 채팅 멘트를 다듬는 비서야.
-
-[기본 규칙]
-- 모바일 채팅 상담 기준으로, 한 눈에 읽기 편해야 한다.
-- 각 문장 뒤에는 줄바꿈(엔터)을 넣어 채팅처럼 한 줄씩 보이게 한다.
-- 원문에 있는 정보, 숫자, 조건, 주의사항은 절대 빼지 말 것.
-- 내용을 요약하지 말고, 의미와 뉘앙스를 유지하면서 자연스럽게 정리한다.
-- 'ㅋㅋ', 'ㅎㅎ', 과도한 반말·인터넷 슬랭은 사용하지 않는다.
-- 존댓말(요/입니다) 위주로, 상담사다운 단정한 어투를 유지한다.
-
-[톤 모드 규칙]
-${toneInstruction}
-
-[출력 형식]
-- 완성된 상담 "한 번"에 보낼 멘트만 출력한다.
-- 불필요한 설명, 따옴표, 머리말(예: "수정된 멘트:" 등)은 붙이지 않는다.
-      `.trim();
-
-      const userMessage = `
-[상담원이 보낼 초안]
-${text}
-      `.trim();
-
-      try {
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + OPENAI_API_KEY
-          },
-          body: JSON.stringify({
-            model: "gpt-4.1-mini",
-            messages: [
-              { role: "system", content: systemMessage },
-              { role: "user", content: userMessage }
-            ]
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          console.error("API 오류:", data.error);
-          alert("오류가 발생했습니다: " + data.error.message);
-        } else {
-          const polished = data.choices?.[0]?.message?.content?.trim();
-          if (polished) {
-            editorTextarea.value = polished;
-            updateCharCount();
-            showToast("AI로 다듬었어요");
-          }
-        }
-      } catch (err) {
-        console.error("네트워크/요청 에러:", err);
-        alert("요청 중 오류가 발생했습니다: " + (err?.message || err));
-      } finally {
-        editorPolishBtn.disabled = false;
-        editorPolishBtn.innerHTML = `<span class="icon">✨</span><span>AI로 다듬기</span>`;
-      }
-    });
-
-    // === 16) 고객 문의 → 답변 생성 ===
-    editorAnswerBtn.addEventListener("click", async () => {
-      const question = (questionTextarea.value || "").trim();
-      if (!question) {
-        alert("고객님이 남긴 문의 내용을 먼저 입력해 주세요.");
-        return;
-      }
-
-      const tone = getActiveTone();
-
-      if (!OPENAI_API_KEY) {
-        const key = prompt(
-          "OpenAI API 키를 입력해주세요.\n(이 키는 파일에 저장되지 않고, 이 브라우저에서만 일시적으로 사용됩니다)"
-        );
-        if (!key) {
-          alert("API 키를 입력하지 않으면 사용할 수 없습니다.");
-          return;
-        }
-        OPENAI_API_KEY = key.trim();
-      }
-
-      editorAnswerBtn.disabled = true;
-      editorAnswerBtn.innerText = "생성 중...";
-
-      const toneInstructionForAnswer =
-        tone === "발랄"
-          ? `
-- 밝고 친근하지만, 상담사답게 단정한 말투.
-- '고객님'을 기본 호칭으로 사용한다.
-- 이모지는 쓸 수 있지만 2개 이내로 제한한다. (없어도 괜찮음)
-          `
-          : `
-- 최대한 차분하고 안정감 있는 톤.
-- 공감/안심/사과 문장을 1문장 이상 포함한다.
-- 이모지는 사용하지 않는다.
-          `;
-
-      const systemMessageForAnswer = `
-너는 화이트샌즈 고객센터 상담사야.
-
-[목표]
-- 고객이 남긴 문의 내용을 읽고, 채팅 상담에서 바로 쓸 수 있는 답변 멘트를 작성한다.
-- 한 번에 보낼 "한 덩어리"의 답변으로 만들어야 한다.
-
-[형식]
-- 각 문장 또는 의미 단위마다 줄바꿈(엔터)을 넣어, 모바일 채팅창에서 읽기 편하게 만든다.
-- 존댓말(요/입니다)만 사용한다.
-- 불필요한 인사는 과하지 않게.
-
-[내용]
-- 고객이 궁금해하는 핵심을 먼저 짚고 바로 답한다.
-- 필요하면 추가 정보(주문번호 등)를 정중하게 요청한다.
-- 조건/주의사항/처리 예상일 등 중요한 정보는 빼먹지 않는다.
-
-[톤 규칙]
-${toneInstructionForAnswer}
-
-[주의]
-- 안내 멘트만 출력한다. (설명, 따옴표, 불릿 등은 붙이지 않는다.)
-      `.trim();
-
-      const userMessageForAnswer = `
-[고객 문의 내용]
-${question}
-      `.trim();
-
-      try {
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + OPENAI_API_KEY
-          },
-          body: JSON.stringify({
-            model: "gpt-4.1-mini",
-            messages: [
-              { role: "system", content: systemMessageForAnswer },
-              { role: "user", content: userMessageForAnswer }
-            ]
-          })
-        });
-
-        const data = await response.json();
-
-        if (data.error) {
-          console.error("API 오류:", data.error);
-          alert("오류가 발생했습니다: " + data.error.message);
-        } else {
-          const answer = data.choices?.[0]?.message?.content?.trim();
-          if (answer) {
-            if (editorTextarea.value.trim()) {
-              const replace = confirm("편집창 내용을 새로 생성된 답변으로 교체할까요?");
-              if (replace) editorTextarea.value = answer;
-              else editorTextarea.value = editorTextarea.value.replace(/\s*$/, "") + "\n\n" + answer;
-            } else {
-              editorTextarea.value = answer;
-            }
-            updateCharCount();
-            showToast("답변 생성 완료");
-          }
-        }
-      } catch (err) {
-        console.error("네트워크/요청 에러:", err);
-        alert("요청 중 오류가 발생했습니다: " + (err?.message || err));
-      } finally {
-        editorAnswerBtn.disabled = false;
-        editorAnswerBtn.innerText = "답변 생성";
-      }
-    });
-
-    // 페이지 열리면 시트에서 데이터 불러오기
-    loadMacrosFromSheet();
-  </script>
+</div>
+
+<script>
+/* 샘플 메크로 */
+const macros=[
+  {title:"배송 지연",content:"배송이 지연되고 있습니다."},
+  {title:"교환 안내",content:"교환 접수가 완료되었습니다."}
+];
+
+const results=document.getElementById("results");
+const editorTextarea=document.getElementById("editorTextarea");
+const editorTitle=document.getElementById("editorTitle");
+
+macros.forEach(m=>{
+  const div=document.createElement("div");
+  div.className="macro-item";
+  div.textContent=m.title;
+  div.onclick=()=>{
+    document.querySelectorAll(".macro-item").forEach(x=>x.classList.remove("active"));
+    div.classList.add("active");
+    editorTitle.textContent=m.title;
+    editorTextarea.value=m.content;
+  };
+  results.appendChild(div);
+});
+
+/* 기본 문구 */
+const DEFAULT_HEADER="안녕하세요 고객님.";
+const DEFAULT_APOLOGY="불편을 드려 죄송합니다.";
+const DEFAULT_FOOTER="감사합니다.";
+
+/* 삽입 함수 */
+function applySnippet(type){
+  let text=editorTextarea.value.trim();
+  if(type==="header" && !text.startsWith(DEFAULT_HEADER)){
+    editorTextarea.value=DEFAULT_HEADER+"\n\n"+text;
+  }
+  if(type==="apology" && !text.includes(DEFAULT_APOLOGY)){
+    editorTextarea.value=text+"\n\n"+DEFAULT_APOLOGY;
+  }
+  if(type==="footer" && !text.endsWith(DEFAULT_FOOTER)){
+    editorTextarea.value=text+"\n\n"+DEFAULT_FOOTER;
+  }
+}
+
+/* ✅ 라디오 클릭 = 즉시 삽입 */
+const radios=document.querySelectorAll(".snippet-radio");
+radios.forEach(label=>{
+  label.addEventListener("click",()=>{
+    radios.forEach(l=>l.classList.remove("active"));
+    label.classList.add("active");
+    const input=label.querySelector("input");
+    input.checked=true;
+    applySnippet(input.value);
+  });
+});
+</script>
 </body>
 </html>
