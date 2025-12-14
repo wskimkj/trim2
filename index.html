@@ -3,26 +3,34 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>템플</title>
+<title>TEMPLATE</title>
 
 <style>
 *{box-sizing:border-box}
+
 body{
   margin:0;
   padding:24px;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
   background:#f3f4f6;
+  display:flex;
+  justify-content:center;
 }
+
 .app{
+  width:100%;
   max-width:1280px;
-  margin:0 auto;
   height:calc(100vh - 48px);
   background:#fff;
   border-radius:24px;
   padding:20px;
   display:flex;
   flex-direction:column;
+  gap:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.15);
 }
+
+/* ===== 레이아웃 50:50 ===== */
 .app-body{
   flex:1;
   display:grid;
@@ -31,13 +39,36 @@ body{
   min-height:0;
 }
 
-/* LEFT */
+/* ================= LEFT ================= */
 .left-panel{
   display:flex;
   flex-direction:column;
-  gap:12px;
+  gap:10px;
   min-height:0;
 }
+
+.search-box{
+  display:flex;
+  gap:8px;
+}
+
+.search-input{
+  flex:1;
+  padding:12px 16px;
+  border-radius:999px;
+  border:1px solid #d1d5db;
+}
+
+.search-button{
+  padding:0 20px;
+  border-radius:999px;
+  border:none;
+  background:#6366f1;
+  color:#fff;
+  font-weight:700;
+  cursor:pointer;
+}
+
 .list-panel{
   flex:1;
   border:1px solid #e5e7eb;
@@ -45,30 +76,32 @@ body{
   padding:10px;
   overflow:auto;
 }
+
 .macro-item{
   padding:10px;
   border-bottom:1px dashed #e5e7eb;
   cursor:pointer;
 }
+
 .macro-item:hover{background:#eef2ff}
 .macro-item.active{
   background:#e0e7ff;
   font-weight:700;
 }
 
-/* RIGHT */
+/* ================= RIGHT ================= */
 .editor-panel{
-  display:grid;
-  grid-template-rows:auto 180px minmax(0,1fr);
-  gap:12px;
   border:1px solid #e5e7eb;
   border-radius:18px;
   padding:14px;
   background:#f9fafb;
+  display:grid;
+  grid-template-rows:auto 180px minmax(0,1fr);
+  gap:12px;
   min-height:0;
 }
 
-/* HEADER */
+/* 헤더 */
 .editor-header{
   display:flex;
   flex-direction:column;
@@ -76,39 +109,45 @@ body{
   padding-bottom:10px;
   border-bottom:1px solid #e5e7eb;
 }
+
 .header-top{
   display:flex;
   justify-content:space-between;
   align-items:center;
 }
+
 .editor-title{
   font-size:14px;
   font-weight:800;
 }
+
 .tone-controls button{
   padding:6px 12px;
   border-radius:999px;
   border:1px solid #d1d5db;
   background:#fff;
-  cursor:pointer;
   font-weight:700;
+  cursor:pointer;
 }
+
 .tone-controls .active{
   background:#eef2ff;
   border-color:#6366f1;
 }
 
-/* ✅ 머리말/사과/꼬리말 라디오 UI */
+/* ===== 머리말 / 사과 / 꼬리말 (라디오 UI) ===== */
 .snippet-radio-group{
   display:flex;
   align-items:center;
   gap:14px;
   font-size:12px;
 }
+
 .snippet-label{
   font-weight:700;
   color:#6b7280;
 }
+
 .snippet-radio{
   display:flex;
   align-items:center;
@@ -117,6 +156,7 @@ body{
   user-select:none;
   font-weight:700;
 }
+
 .snippet-radio input{
   appearance:none;
   width:10px;
@@ -125,9 +165,11 @@ body{
   border:2px solid #d1d5db;
   position:relative;
 }
+
 .snippet-radio.active input{
   border-color:#6366f1;
 }
+
 .snippet-radio.active input::after{
   content:"";
   width:4px;
@@ -149,12 +191,14 @@ body{
   grid-template-columns:1fr auto;
   gap:10px;
 }
+
 .answer-row textarea{
   resize:none;
-  border:1px solid #d1d5db;
   border-radius:12px;
+  border:1px solid #d1d5db;
   padding:10px;
 }
+
 .primary-btn{
   align-self:flex-end;
   padding:10px 14px;
@@ -173,6 +217,7 @@ body{
   gap:10px;
   min-height:0;
 }
+
 .editor-textarea{
   resize:none;
   border-radius:14px;
@@ -189,13 +234,17 @@ body{
 
     <!-- LEFT -->
     <div class="left-panel">
+      <div class="search-box">
+        <input class="search-input" placeholder="검색" />
+        <button class="search-button">검색</button>
+      </div>
+
       <div class="list-panel" id="results"></div>
     </div>
 
     <!-- RIGHT -->
     <div class="editor-panel">
 
-      <!-- HEADER -->
       <div class="editor-header">
         <div class="header-top">
           <div class="editor-title" id="editorTitle">메크로 선택</div>
@@ -205,7 +254,7 @@ body{
           </div>
         </div>
 
-        <!-- ✅ 라디오 삽입 -->
+        <!-- 라디오 삽입 -->
         <div class="snippet-radio-group">
           <span class="snippet-label">문구 삽입</span>
 
@@ -243,7 +292,7 @@ body{
 </div>
 
 <script>
-/* 샘플 메크로 */
+/* 샘플 데이터 */
 const macros=[
   {title:"배송 지연",content:"배송이 지연되고 있습니다."},
   {title:"교환 안내",content:"교환 접수가 완료되었습니다."}
@@ -253,6 +302,7 @@ const results=document.getElementById("results");
 const editorTextarea=document.getElementById("editorTextarea");
 const editorTitle=document.getElementById("editorTitle");
 
+/* 리스트 */
 macros.forEach(m=>{
   const div=document.createElement("div");
   div.className="macro-item";
@@ -271,7 +321,7 @@ const DEFAULT_HEADER="안녕하세요 고객님.";
 const DEFAULT_APOLOGY="불편을 드려 죄송합니다.";
 const DEFAULT_FOOTER="감사합니다.";
 
-/* 삽입 함수 */
+/* 삽입 */
 function applySnippet(type){
   let text=editorTextarea.value.trim();
   if(type==="header" && !text.startsWith(DEFAULT_HEADER)){
@@ -285,7 +335,7 @@ function applySnippet(type){
   }
 }
 
-/* ✅ 라디오 클릭 = 즉시 삽입 */
+/* 라디오 클릭 = 즉시 삽입 */
 const radios=document.querySelectorAll(".snippet-radio");
 radios.forEach(label=>{
   label.addEventListener("click",()=>{
