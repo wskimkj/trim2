@@ -91,12 +91,14 @@
     }
 
     .left-panel {
-      display: flex;
-      flex-direction: column;
-      width: 300px;
-      flex-shrink: 0;
-      gap: 8px;
-    }
+  display: flex;
+  flex-direction: column;
+  width: auto;     /* 고정폭 제거 */
+  flex: 1;         /* 50% */
+  min-width: 0;    /* overflow 방지 */
+  gap: 8px;
+}
+
 
     .search-box {
       display: flex;
