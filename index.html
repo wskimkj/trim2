@@ -33,6 +33,7 @@
       gap: 12px;
       backdrop-filter: blur(16px);
       height: calc(100vh - 48px);
+      min-height: 0;
     }
 
     .app-header {
@@ -67,10 +68,6 @@
       gap: 6px;
     }
 
-    .app-title-emoji {
-      font-size: 20px;
-    }
-
     /* ⚡ 버튼 (구글시트 연결) */
     .app-tag {
       font-size: 11px;
@@ -92,28 +89,32 @@
       color: #6b7280;
     }
 
-    /* ==== 새 레이아웃 핵심 ==== */
+    /* =========================
+       ✅ 캡쳐 느낌 핵심 레이아웃
+       ========================= */
 
-    .app-body {
-      display: flex;
+    .app-body{
+      display: grid;
+      grid-template-columns: minmax(340px, 380px) minmax(0, 1fr);
       gap: 16px;
       flex: 1;
       min-height: 0;
     }
 
     .left-panel {
+      width: auto;
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      width: 300px;       /* 왼쪽 컬럼 고정 폭 */
-      flex-shrink: 0;
-      gap: 8px;
+      gap: 10px;
+      min-height: 0;
     }
 
     .search-box {
       display: flex;
       gap: 8px;
       flex-shrink: 0;
-      margin-bottom: 0;   /* left-panel의 gap으로 간격 조절 */
+      margin-bottom: 0;
     }
 
     .search-input {
@@ -130,9 +131,7 @@
         0 10px 30px rgba(148, 163, 184, 0.2);
     }
 
-    .search-input::placeholder {
-      color: #9ca3af;
-    }
+    .search-input::placeholder { color: #9ca3af; }
 
     .search-input:focus {
       border-color: #a855f7;
@@ -160,14 +159,8 @@
       flex-shrink: 0;
     }
 
-    .search-button:hover {
-      opacity: 0.97;
-      transform: translateY(-0.5px);
-    }
-
-    .search-button span.icon {
-      font-size: 14px;
-    }
+    .search-button:hover { opacity: 0.97; transform: translateY(-0.5px); }
+    .search-button span.icon { font-size: 14px; }
 
     .top-row {
       display: flex;
@@ -176,30 +169,14 @@
       gap: 8px;
       flex-wrap: wrap;
       flex-shrink: 0;
-      margin-bottom: 0;   /* left-panel gap으로 대체 */
+      margin-bottom: 0;
     }
 
-    .result-count {
-      font-size: 12px;
-      color: #6b7280;
-    }
-
-    .result-count strong {
-      color: #4f46e5;
-    }
+    .result-count { font-size: 12px; color: #6b7280; }
+    .result-count strong { color: #4f46e5; }
 
     /* 분류 필터는 화면에서 숨김 */
-    .category-filter {
-      display: none;
-    }
-
-    .category-select {
-      padding: 4px 8px;
-      font-size: 12px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-    }
+    .category-filter { display: none; }
 
     .type-filter {
       display: flex;
@@ -223,17 +200,10 @@
       font-size: 11px;
     }
 
-    .type-pill input {
-      margin: 0;
-    }
-
-    .type-pill.active {
-      border-color: #6366f1;
-      background: #eef2ff;
-    }
+    .type-pill input { margin: 0; }
+    .type-pill.active { border-color: #6366f1; background: #eef2ff; }
 
     /* 왼쪽: 리스트 */
-
     .list-panel {
       border-radius: 20px;
       background: linear-gradient(145deg, #f9fafb, #eef2ff);
@@ -244,7 +214,7 @@
       box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
       min-height: 0;
       position: relative;
-      flex: 1;            /* left-panel 안에서 남은 세로 공간 모두 차지 */
+      flex: 1;
     }
 
     .list-header {
@@ -262,15 +232,6 @@
       display: flex;
       align-items: center;
       gap: 4px;
-    }
-
-    .list-title span.icon {
-      font-size: 14px;
-    }
-
-    .list-hint {
-      font-size: 11px;
-      color: #9ca3af;
     }
 
     .results {
@@ -353,14 +314,7 @@
       gap: 4px;
     }
 
-    .copy-mini span.icon {
-      font-size: 12px;
-    }
-
-    .copy-mini:hover {
-      background: #e5e7eb;
-    }
-
+    .copy-mini:hover { background: #e5e7eb; }
     .empty-state {
       padding: 24px 4px;
       text-align: center;
@@ -371,42 +325,46 @@
     /* ---------------------- */
     /* 오른쪽: 편집 패널 전체 */
     /* ---------------------- */
-
     .editor-panel {
       border-radius: 20px;
       border: 1px solid rgba(209, 213, 219, 0.9);
       background: radial-gradient(circle at top left, #eef2ff, #f9fafb 55%);
       padding: 12px 14px 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
       box-shadow:
         0 12px 30px rgba(148, 163, 184, 0.3),
         inset 0 1px 0 rgba(255, 255, 255, 0.7);
       min-height: 0;
-      flex: 1;            /* 오른쪽이 나머지 폭 전부 사용 */
-    }
 
-    .editor-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
+      /* ✅ 오른쪽을 3구간으로 쪼갬: 헤더(툴바) / 상단박스 / 하단박스 */
+      display: grid;
+      grid-template-rows: auto 190px minmax(0, 1fr);
       gap: 12px;
-      flex-shrink: 0;
     }
 
-    .editor-title-wrap {
-      flex: 1;
+    /* ====== ✅ 새 "툴바" 헤더 레이아웃(A안) ====== */
+    .editor-header{
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      flex-shrink: 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(209, 213, 219, 0.7);
+    }
+
+    .toolbar-top{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .toolbar-left{
       display: flex;
       flex-direction: column;
       gap: 6px;
-    }
-
-    .editor-top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 8px;
+      min-width: 240px;
+      flex: 1;
     }
 
     .editor-label {
@@ -417,38 +375,16 @@
       color: #9ca3af;
     }
 
-    .tone-controls {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .tone-pill {
-      padding: 3px 10px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: #f9fafb;
-      font-size: 11px;
-      cursor: pointer;
-      color: #4b5563;
-    }
-
-    .tone-pill.active {
-      border-color: #6366f1;
-      background: #eef2ff;
-      color: #3730a3;
-    }
-
     .editor-title-line {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
     }
 
     .editor-title-text {
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 700;
       color: #111827;
     }
 
@@ -461,40 +397,46 @@
       border: 1px solid rgba(129, 140, 248, 0.4);
     }
 
-    .snippet-controls {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 4px;
-    }
-
-    .snippet-btn {
-      font-size: 11px;
-      border-radius: 999px;
-      padding: 3px 10px;
-      border: 1px solid rgba(148, 163, 184, 0.7);
-      background: rgba(255, 255, 255, 0.9);
-      cursor: pointer;
-    }
-
-    .snippet-btn:hover {
-      background: #e5e7eb;
-    }
-
-    .editor-actions {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
+    .toolbar-center{
+      display: inline-flex;
+      align-items: center;
       gap: 6px;
+      flex-shrink: 0;
+    }
+
+    .tone-pill {
+      padding: 6px 12px;
+      border-radius: 999px;
+      border: 1px solid #d1d5db;
+      background: rgba(255,255,255,0.8);
+      font-size: 12px;
+      cursor: pointer;
+      color: #4b5563;
+      white-space: nowrap;
+    }
+
+    .tone-pill.active {
+      border-color: #6366f1;
+      background: #eef2ff;
+      color: #3730a3;
+      box-shadow: 0 8px 18px rgba(129, 140, 248, 0.25);
+    }
+
+    .toolbar-right{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
     }
 
     .copy-main {
-      padding: 7px 16px;
+      padding: 8px 14px;
       border-radius: 999px;
       border: none;
       background: #111827;
       color: #ffffff;
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
       display: inline-flex;
@@ -502,114 +444,141 @@
       gap: 6px;
       box-shadow: 0 12px 28px rgba(15, 23, 42, 0.45);
     }
-
-    .copy-main span.icon {
-      font-size: 14px;
-    }
-
-    .copy-main:hover {
-      background: #020617;
-      transform: translateY(-0.5px);
-    }
+    .copy-main:hover { background: #020617; transform: translateY(-0.5px); }
 
     .secondary-btn {
-      padding: 6px 12px;
+      padding: 8px 12px;
       border-radius: 999px;
       border: 1px solid rgba(79, 70, 229, 0.4);
       background: rgba(238, 242, 255, 0.95);
-      font-size: 11px;
+      font-size: 12px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       color: #3730a3;
+      white-space: nowrap;
     }
-
-    .secondary-btn:hover {
-      background: rgba(224, 231, 255, 1);
-    }
+    .secondary-btn:hover { background: rgba(224, 231, 255, 1); }
 
     .ghost-btn {
       border: none;
       background: none;
-      font-size: 11px;
+      font-size: 12px;
       color: #9ca3af;
       cursor: pointer;
+      white-space: nowrap;
+    }
+    .ghost-btn:hover { color: #6b7280; }
+
+    /* ✅ 스니펫 버튼을 "세그먼트"처럼 */
+    .toolbar-bottom{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .ghost-btn:hover {
-      color: #6b7280;
+    .snippet-controls {
+      display: inline-flex;
+      gap: 0;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid rgba(148,163,184,0.8);
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 10px 22px rgba(148,163,184,0.16);
     }
 
-    /* 문의 → 답변 생성 영역 */
+    .snippet-btn {
+      font-size: 12px;
+      padding: 8px 12px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      color: #374151;
+      white-space: nowrap;
+    }
+    .snippet-btn + .snippet-btn { border-left: 1px solid rgba(148,163,184,0.6); }
+    .snippet-btn:hover { background: rgba(224,231,255,0.7); }
+
+    /* ✅ 메타/글자수 표시 위치 */
+    .editor-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      color: #9ca3af;
+      flex-shrink: 0;
+      margin-top: 8px;
+    }
+    .editor-footer span strong { color: #6b7280; }
+
+    /* 문의 → 답변 생성 영역 (상단 박스) */
     .answer-row {
       display: grid;
-      grid-template-columns: minmax(0, 1.5fr) auto;
+      grid-template-columns: minmax(0, 1fr) auto;
       gap: 10px;
-      padding: 8px 10px;
-      border-radius: 14px;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px dashed rgba(148, 163, 184, 0.7);
+
+      border-radius: 18px;
+      padding: 12px;
+      background: rgba(255,255,255,0.98);
+      border: 1px solid rgba(148,163,184,0.8);
+      box-shadow: 0 10px 22px rgba(148, 163, 184, 0.18);
+
+      min-height: 0;
     }
 
     .question-textarea {
       width: 100%;
-      border: none;
+      border: 1px solid rgba(209, 213, 219, 0.9);
       outline: none;
-      resize: vertical;
-      min-height: 70px;
-      max-height: 120px;
+      resize: none;
+      min-height: 120px;
+      max-height: 220px;
       font-family: inherit;
       font-size: 12px;
-      line-height: 1.5;
-      background: transparent;
+      line-height: 1.55;
+      background: rgba(249,250,251,0.9);
+      border-radius: 14px;
+      padding: 10px 11px;
     }
 
     .answer-side {
       display: flex;
       flex-direction: column;
       align-items: flex-end;
-      gap: 6px;
+      justify-content: flex-end;
+      gap: 8px;
     }
 
     .answer-btn {
-      padding: 6px 12px;
+      padding: 10px 14px;
       border-radius: 999px;
       border: none;
       background: linear-gradient(130deg, #6366f1, #a855f7);
       color: #ffffff;
-      font-size: 12px;
-      font-weight: 600;
+      font-size: 13px;
+      font-weight: 700;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       gap: 6px;
       white-space: nowrap;
-      box-shadow: 0 10px 22px rgba(129, 140, 248, 0.5);
+      box-shadow: 0 12px 24px rgba(129, 140, 248, 0.45);
     }
+    .answer-btn:hover { opacity: 0.97; transform: translateY(-0.5px); }
 
-    .answer-btn:hover {
-      opacity: 0.97;
-      transform: translateY(-0.5px);
-    }
-
-    .answer-hint {
-      margin: 0;
-      font-size: 11px;
-      color: #6b7280;
-      text-align: right;
-    }
-
+    /* 하단: 편집 텍스트 */
     .editor-textarea {
       width: 100%;
-      flex: 1;
       resize: none;
-      border-radius: 16px;
+      border-radius: 18px;
       border: 1px solid rgba(148, 163, 184, 0.9);
-      padding: 10px 11px;
+      padding: 14px;
       font-family: inherit;
       font-size: 13px;
-      line-height: 1.5;
+      line-height: 1.6;
       outline: none;
       background: rgba(255, 255, 255, 0.98);
       box-shadow:
@@ -626,22 +595,7 @@
         0 0 0 1px rgba(129, 140, 248, 0.7);
     }
 
-    .editor-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: #9ca3af;
-      flex-shrink: 0;
-      margin-top: 4px;
-    }
-
-    .editor-footer span strong {
-      color: #6b7280;
-    }
-
     /* 토스트 & 미리보기 버블 */
-
     .toast {
       position: fixed;
       left: 50%;
@@ -699,10 +653,6 @@
       color: #4b5563;
     }
 
-    .preview-title span.icon {
-      font-size: 14px;
-    }
-
     .preview-body {
       font-size: 12px;
       line-height: 1.5;
@@ -716,32 +666,13 @@
       body { padding: 12px; }
       .app { padding: 16px 14px 16px; height: auto; }
 
-      .app-body {
-        flex-direction: column;
-      }
+      .app-body { grid-template-columns: 1fr; }
 
-      .left-panel {
-        width: 100%;
-      }
+      .editor-panel { grid-template-rows: auto auto minmax(260px, 1fr); }
 
-      .editor-panel {
-        min-height: 260px;
-      }
-      .editor-header {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .editor-actions {
-        flex-direction: row;
-        justify-content: flex-end;
-      }
-      .answer-row {
-        grid-template-columns: 1fr;
-      }
-      .answer-side {
-        align-items: flex-start;
-        text-align: left;
-      }
+      .answer-row { grid-template-columns: 1fr; }
+      .answer-side { align-items: flex-start; }
+
       .preview-bubble {
         position: fixed;
         right: 16px;
@@ -758,9 +689,7 @@
     <div class="app-header">
       <div class="app-title-wrap">
         <div class="app-title-row">
-          <div class="app-title">
-            템플
-          </div>
+          <div class="app-title">템플</div>
           <!-- ⚡ 버튼: 구글 시트 연결 -->
           <button id="sheetOpenBtn" class="app-tag" type="button" title="Google Sheets 열기">
             <span>⚡</span>
@@ -770,9 +699,8 @@
       </div>
     </div>
 
-    <!-- 여기부터 레이아웃 변경 -->
     <div class="app-body">
-      <!-- 왼쪽 전체 컬럼 -->
+      <!-- 왼쪽 -->
       <div class="left-panel">
         <div class="search-box">
           <input
@@ -814,6 +742,7 @@
               </label>
             </div>
           </div>
+
           <div class="category-filter">
             분류:
             <select id="categorySelect" class="category-select">
@@ -822,7 +751,6 @@
           </div>
         </div>
 
-        <!-- LIST 패널 -->
         <div class="list-panel">
           <div class="list-header">
             <div class="list-title">
@@ -843,48 +771,53 @@
         </div>
       </div>
 
-      <!-- 오른쪽: 편집 -->
+      <!-- 오른쪽 -->
       <div class="editor-panel">
+
+        <!-- ✅ 새 툴바 헤더(A안) -->
         <div class="editor-header">
-          <div class="editor-title-wrap">
-            <!-- 윗줄: 라벨 + 톤 -->
-            <div class="editor-top-row">
+          <div class="toolbar-top">
+            <div class="toolbar-left">
               <div class="editor-label">ACTIVE MACRO</div>
-              <div class="tone-controls">
-                <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
-                <button type="button" class="tone-pill" data-value="차분">차분</button>
+              <div class="editor-title-line">
+                <div id="editorTitle" class="editor-title-text"></div>
+                <div id="editorCategory" class="editor-category-pill" style="display:none;"></div>
               </div>
             </div>
 
-            <!-- 둘째 줄: 제목/카테고리 -->
-            <div class="editor-title-line">
-              <div id="editorTitle" class="editor-title-text"></div>
-              <div id="editorCategory" class="editor-category-pill" style="display:none;"></div>
+            <div class="toolbar-center">
+              <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
+              <button type="button" class="tone-pill" data-value="차분">차분</button>
             </div>
 
-            <!-- 셋째 줄: 스니펫 버튼 (머리말/사과/꼬리말) -->
+            <div class="toolbar-right">
+              <button id="editorResetBtn" class="ghost-btn" type="button" disabled>원본</button>
+              <button id="editorPolishBtn" class="secondary-btn" type="button">
+                <span class="icon">✨</span>
+                <span>AI로 다듬기</span>
+              </button>
+              <button id="editorCopyBtn" class="copy-main" type="button">
+                <span class="icon">📋</span>
+                <span>복사</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="toolbar-bottom">
             <div class="snippet-controls">
               <button type="button" class="snippet-btn" data-snippet="header">머리말</button>
               <button type="button" class="snippet-btn" data-snippet="apology">사과</button>
               <button type="button" class="snippet-btn" data-snippet="footer">꼬리말</button>
             </div>
-          </div>
 
-          <!-- 우측: 버튼들만 심플하게 -->
-          <div class="editor-actions">
-            <button id="editorCopyBtn" class="copy-main" type="button">
-              <span class="icon">📋</span>
-              <span>복사</span>
-            </button>
-            <button id="editorPolishBtn" class="secondary-btn" type="button">
-              <span class="icon">✨</span>
-              <span>AI로 다듬기</span>
-            </button>
-            <button id="editorResetBtn" class="ghost-btn" type="button" disabled>원본</button>
+            <div class="editor-footer" style="margin-top:0;">
+              <span id="editorMeta">선택된 메크로 없음</span>
+              <span id="charCount">0자</span>
+            </div>
           </div>
         </div>
 
-        <!-- 새 기능: 고객 문의 → 답변 생성 -->
+        <!-- 상단 박스: 문의 → 답변 생성 -->
         <div class="answer-row">
           <textarea
             id="questionTextarea"
@@ -899,19 +832,15 @@
           </div>
         </div>
 
+        <!-- 하단 박스: 편집창 -->
         <textarea
           id="editorTextarea"
           class="editor-textarea"
           placeholder="편집해 주세요."
         ></textarea>
-
-        <div class="editor-footer">
-          <span id="editorMeta">선택된 메크로 없음</span>
-          <span id="charCount">0자</span>
-        </div>
       </div>
-    </div> <!-- /app-body -->
-  </div> <!-- /app -->
+    </div>
+  </div>
 
   <!-- 토스트 -->
   <div id="toast" class="toast">복사</div>
@@ -1044,7 +973,7 @@
     const sheetOpenBtn = document.getElementById("sheetOpenBtn");
     const snippetButtons = document.querySelectorAll(".snippet-btn");
 
-    const listPanelEl = document.querySelector(".list-panel");
+    const listPanelElRef = document.querySelector(".list-panel");
     const typeFilterRadios = document.querySelectorAll('input[name="typeFilter"]');
     const typeFilterLabels = document.querySelectorAll(".type-pill");
 
@@ -1224,7 +1153,6 @@
       const len = editorTextarea.value.length;
       charCountEl.textContent = `${len}자`;
     }
-
     editorTextarea && editorTextarea.addEventListener("input", updateCharCount);
 
     // === 11) 클립보드 복사 ===
@@ -1275,8 +1203,6 @@
     });
 
     // === 13) 미리보기 버블 ===
-    const listPanelElRef = document.querySelector(".list-panel");
-
     function showPreview(macro, anchorEl) {
       if (!macro || !macro.content || !anchorEl) {
         hidePreview();
@@ -1585,7 +1511,6 @@ ${question}
         } else {
           const answer = data.choices?.[0]?.message?.content?.trim();
           if (answer) {
-            // 기존 내용이 있으면 덮어쓸지 물어보고, 없으면 바로 넣기
             if (editorTextarea.value.trim()) {
               const replace = confirm("편집창 내용을 새로 생성된 답변으로 교체할까요?");
               if (replace) {
