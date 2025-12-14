@@ -84,25 +84,19 @@
       border: none;
     }
 
-    .app-subtitle {
-      font-size: 13px;
-      color: #6b7280;
-    }
-
     /* =========================
-       ✅ 캡쳐 느낌 핵심 레이아웃
+       ✅ 1) 좌/우 50% 비중
        ========================= */
-
     .app-body{
       display: grid;
-      grid-template-columns: minmax(340px, 380px) minmax(0, 1fr);
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); /* 50:50 */
       gap: 16px;
       flex: 1;
       min-height: 0;
     }
 
+    /* ---------- LEFT ---------- */
     .left-panel {
-      width: auto;
       min-width: 0;
       display: flex;
       flex-direction: column;
@@ -114,7 +108,6 @@
       display: flex;
       gap: 8px;
       flex-shrink: 0;
-      margin-bottom: 0;
     }
 
     .search-input {
@@ -160,7 +153,6 @@
     }
 
     .search-button:hover { opacity: 0.97; transform: translateY(-0.5px); }
-    .search-button span.icon { font-size: 14px; }
 
     .top-row {
       display: flex;
@@ -169,13 +161,12 @@
       gap: 8px;
       flex-wrap: wrap;
       flex-shrink: 0;
-      margin-bottom: 0;
     }
 
     .result-count { font-size: 12px; color: #6b7280; }
     .result-count strong { color: #4f46e5; }
 
-    /* 분류 필터는 화면에서 숨김 */
+    /* 분류 필터 숨김 */
     .category-filter { display: none; }
 
     .type-filter {
@@ -199,11 +190,9 @@
       cursor: pointer;
       font-size: 11px;
     }
-
     .type-pill input { margin: 0; }
     .type-pill.active { border-color: #6366f1; background: #eef2ff; }
 
-    /* 왼쪽: 리스트 */
     .list-panel {
       border-radius: 20px;
       background: linear-gradient(145deg, #f9fafb, #eef2ff);
@@ -243,14 +232,14 @@
     }
 
     .macro-item {
-      padding: 9px 6px 9px 4px;
+      padding: 10px 10px 10px 8px;
       border-bottom: 1px dashed rgba(209, 213, 219, 0.9);
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 5px;
       cursor: pointer;
-      border-radius: 12px;
-      transition: background-color 0.12s, box-shadow 0.12s, transform 0.05s, border-color 0.12s;
+      border-radius: 14px;
+      transition: background-color 0.12s, box-shadow 0.12s, transform 0.05s;
     }
 
     .macro-item:hover {
@@ -264,7 +253,6 @@
     .macro-item.active {
       background: rgba(224, 231, 255, 1);
       box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.9);
-      border-color: transparent;
     }
 
     .macro-header {
@@ -276,7 +264,7 @@
 
     .macro-title {
       font-size: 13px;
-      font-weight: 600;
+      font-weight: 700;
       color: #111827;
       display: inline-flex;
       align-items: center;
@@ -291,6 +279,7 @@
       background: #eef2ff;
       color: #4f46e5;
       border: 1px solid rgba(129, 140, 248, 0.3);
+      font-weight: 600;
     }
 
     .macro-subtext {
@@ -299,22 +288,9 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      padding-right: 6px;
     }
 
-    .copy-mini {
-      padding: 3px 8px;
-      font-size: 11px;
-      border-radius: 999px;
-      border: 1px solid #d1d5db;
-      background: rgba(255, 255, 255, 0.9);
-      cursor: pointer;
-      flex-shrink: 0;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .copy-mini:hover { background: #e5e7eb; }
     .empty-state {
       padding: 24px 4px;
       text-align: center;
@@ -322,9 +298,7 @@
       font-size: 13px;
     }
 
-    /* ---------------------- */
-    /* 오른쪽: 편집 패널 전체 */
-    /* ---------------------- */
+    /* ---------- RIGHT ---------- */
     .editor-panel {
       border-radius: 20px;
       border: 1px solid rgba(209, 213, 219, 0.9);
@@ -335,23 +309,22 @@
         inset 0 1px 0 rgba(255, 255, 255, 0.7);
       min-height: 0;
 
-      /* ✅ 오른쪽을 3구간으로 쪼갬: 헤더(툴바) / 상단박스 / 하단박스 */
       display: grid;
       grid-template-rows: auto 190px minmax(0, 1fr);
       gap: 12px;
     }
 
-    /* ====== ✅ 새 "툴바" 헤더 레이아웃(A안) ====== */
+    /* 헤더: 제목/톤 + 머리말/사과/꼬리말(새 UI) */
     .editor-header{
       display: flex;
       flex-direction: column;
       gap: 10px;
       flex-shrink: 0;
-      padding-bottom: 8px;
+      padding-bottom: 10px;
       border-bottom: 1px solid rgba(209, 213, 219, 0.7);
     }
 
-    .toolbar-top{
+    .header-top{
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -359,7 +332,7 @@
       flex-wrap: wrap;
     }
 
-    .toolbar-left{
+    .header-left{
       display: flex;
       flex-direction: column;
       gap: 6px;
@@ -369,7 +342,7 @@
 
     .editor-label {
       font-size: 10px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
       color: #9ca3af;
@@ -384,7 +357,7 @@
 
     .editor-title-text {
       font-size: 14px;
-      font-weight: 700;
+      font-weight: 800;
       color: #111827;
     }
 
@@ -395,9 +368,10 @@
       background: rgba(79, 70, 229, 0.08);
       color: #4f46e5;
       border: 1px solid rgba(129, 140, 248, 0.4);
+      font-weight: 700;
     }
 
-    .toolbar-center{
+    .tone-controls{
       display: inline-flex;
       align-items: center;
       gap: 6px;
@@ -408,11 +382,12 @@
       padding: 6px 12px;
       border-radius: 999px;
       border: 1px solid #d1d5db;
-      background: rgba(255,255,255,0.8);
+      background: rgba(255,255,255,0.85);
       font-size: 12px;
       cursor: pointer;
       color: #4b5563;
       white-space: nowrap;
+      font-weight: 700;
     }
 
     .tone-pill.active {
@@ -422,99 +397,70 @@
       box-shadow: 0 8px 18px rgba(129, 140, 248, 0.25);
     }
 
-    .toolbar-right{
+    /* ✅ 4) 머리말/사과/꼬리말 새 UI (퀵 버튼) */
+    .quick-insert{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+
+    .quick-left{
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .copy-main {
-      padding: 8px 14px;
-      border-radius: 999px;
-      border: none;
-      background: #111827;
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      box-shadow: 0 12px 28px rgba(15, 23, 42, 0.45);
-    }
-    .copy-main:hover { background: #020617; transform: translateY(-0.5px); }
-
-    .secondary-btn {
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid rgba(79, 70, 229, 0.4);
-      background: rgba(238, 242, 255, 0.95);
-      font-size: 12px;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #3730a3;
-      white-space: nowrap;
-    }
-    .secondary-btn:hover { background: rgba(224, 231, 255, 1); }
-
-    .ghost-btn {
-      border: none;
-      background: none;
-      font-size: 12px;
-      color: #9ca3af;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-    .ghost-btn:hover { color: #6b7280; }
-
-    /* ✅ 스니펫 버튼을 "세그먼트"처럼 */
-    .toolbar-bottom{
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
       flex-wrap: wrap;
     }
 
-    .snippet-controls {
+    .quick-btn{
       display: inline-flex;
-      gap: 0;
-      border-radius: 999px;
-      overflow: hidden;
-      border: 1px solid rgba(148,163,184,0.8);
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-radius: 14px; /* 알약 말고 '카드 버튼' 느낌 */
+      border: 1px solid rgba(148, 163, 184, 0.8);
       background: rgba(255,255,255,0.92);
-      box-shadow: 0 10px 22px rgba(148,163,184,0.16);
-    }
-
-    .snippet-btn {
-      font-size: 12px;
-      padding: 8px 12px;
-      border: none;
-      background: transparent;
       cursor: pointer;
+      font-size: 12px;
+      font-weight: 800;
       color: #374151;
+      box-shadow: 0 10px 20px rgba(148,163,184,0.14);
       white-space: nowrap;
     }
-    .snippet-btn + .snippet-btn { border-left: 1px solid rgba(148,163,184,0.6); }
-    .snippet-btn:hover { background: rgba(224,231,255,0.7); }
 
-    /* ✅ 메타/글자수 표시 위치 */
-    .editor-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 11px;
-      color: #9ca3af;
-      flex-shrink: 0;
-      margin-top: 8px;
+    .quick-btn:hover{
+      transform: translateY(-0.5px);
+      background: rgba(224,231,255,0.7);
+      border-color: rgba(129,140,248,0.8);
     }
-    .editor-footer span strong { color: #6b7280; }
 
-    /* 문의 → 답변 생성 영역 (상단 박스) */
+    .quick-ico{
+      width: 26px;
+      height: 26px;
+      border-radius: 10px;
+      display: grid;
+      place-items: center;
+      font-size: 14px;
+      background: rgba(99, 102, 241, 0.10);
+      border: 1px solid rgba(99, 102, 241, 0.20);
+    }
+
+    .meta-right{
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #9ca3af;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .meta-right strong{
+      color: #6b7280;
+    }
+
+    /* 상단 박스: 문의 → 답변 생성 */
     .answer-row {
       display: grid;
       grid-template-columns: minmax(0, 1fr) auto;
@@ -552,24 +498,31 @@
       gap: 8px;
     }
 
-    .answer-btn {
+    .primary-btn {
       padding: 10px 14px;
       border-radius: 999px;
       border: none;
       background: linear-gradient(130deg, #6366f1, #a855f7);
       color: #ffffff;
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 800;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       white-space: nowrap;
       box-shadow: 0 12px 24px rgba(129, 140, 248, 0.45);
     }
-    .answer-btn:hover { opacity: 0.97; transform: translateY(-0.5px); }
+    .primary-btn:hover { opacity: 0.97; transform: translateY(-0.5px); }
 
-    /* 하단: 편집 텍스트 */
+    /* 하단: 편집창 + 하단 액션바(✅ 2) AI 버튼 여기로) */
+    .editor-wrap{
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      gap: 10px;
+      min-height: 0;
+    }
+
     .editor-textarea {
       width: 100%;
       resize: none;
@@ -595,7 +548,20 @@
         0 0 0 1px rgba(129, 140, 248, 0.7);
     }
 
-    /* 토스트 & 미리보기 버블 */
+    .editor-actions-bottom{
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    /* ✅ AI 다듬기 버튼: 답변 생성 느낌(같은 primary 스타일) */
+    .polish-btn{
+      background: linear-gradient(130deg, #6366f1, #a855f7);
+    }
+
+    /* 토스트 */
     .toast {
       position: fixed;
       left: 50%;
@@ -618,6 +584,7 @@
       transform: translateX(-50%) translateY(-4px);
     }
 
+    /* 미리보기 버블 */
     .preview-bubble {
       position: absolute;
       top: 60px;
@@ -644,8 +611,8 @@
     }
 
     .preview-title {
-      font-weight: 600;
-      margin-bottom: 4px;
+      font-weight: 700;
+      margin-bottom: 6px;
       display: flex;
       align-items: center;
       gap: 6px;
@@ -681,6 +648,9 @@
         bottom: 80px;
         max-width: none;
       }
+
+      .editor-actions-bottom{ justify-content: stretch; }
+      .primary-btn{ width: 100%; justify-content: center; }
     }
   </style>
 </head>
@@ -690,25 +660,18 @@
       <div class="app-title-wrap">
         <div class="app-title-row">
           <div class="app-title">템플</div>
-          <!-- ⚡ 버튼: 구글 시트 연결 -->
           <button id="sheetOpenBtn" class="app-tag" type="button" title="Google Sheets 열기">
             <span>⚡</span>
           </button>
         </div>
-        <div class="app-subtitle"></div>
       </div>
     </div>
 
     <div class="app-body">
-      <!-- 왼쪽 -->
+      <!-- LEFT -->
       <div class="left-panel">
         <div class="search-box">
-          <input
-            id="searchInput"
-            class="search-input"
-            type="text"
-            placeholder=" (예: 배송, 교환 등)"
-          />
+          <input id="searchInput" class="search-input" type="text" placeholder=" (예: 배송, 교환 등)" />
           <button id="searchButton" class="search-button" type="button">
             <span class="icon">🔍</span>
             <span>검색</span>
@@ -771,13 +734,12 @@
         </div>
       </div>
 
-      <!-- 오른쪽 -->
+      <!-- RIGHT -->
       <div class="editor-panel">
 
-        <!-- ✅ 새 툴바 헤더(A안) -->
         <div class="editor-header">
-          <div class="toolbar-top">
-            <div class="toolbar-left">
+          <div class="header-top">
+            <div class="header-left">
               <div class="editor-label">ACTIVE MACRO</div>
               <div class="editor-title-line">
                 <div id="editorTitle" class="editor-title-text"></div>
@@ -785,64 +747,64 @@
               </div>
             </div>
 
-            <div class="toolbar-center">
+            <div class="tone-controls">
               <button type="button" class="tone-pill active" data-value="발랄">발랄</button>
               <button type="button" class="tone-pill" data-value="차분">차분</button>
             </div>
-
-            <div class="toolbar-right">
-              <button id="editorResetBtn" class="ghost-btn" type="button" disabled>원본</button>
-              <button id="editorPolishBtn" class="secondary-btn" type="button">
-                <span class="icon">✨</span>
-                <span>AI로 다듬기</span>
-              </button>
-              <button id="editorCopyBtn" class="copy-main" type="button">
-                <span class="icon">📋</span>
-                <span>복사</span>
-              </button>
-            </div>
           </div>
 
-          <div class="toolbar-bottom">
-            <div class="snippet-controls">
-              <button type="button" class="snippet-btn" data-snippet="header">머리말</button>
-              <button type="button" class="snippet-btn" data-snippet="apology">사과</button>
-              <button type="button" class="snippet-btn" data-snippet="footer">꼬리말</button>
+          <!-- ✅ 새 퀵버튼(머리말/사과/꼬리말) + 메타/글자수 -->
+          <div class="quick-insert">
+            <div class="quick-left">
+              <button type="button" class="quick-btn snippet-btn" data-snippet="header" title="머리말 추가">
+                <span class="quick-ico">👋</span>
+                <span>머리말</span>
+              </button>
+              <button type="button" class="quick-btn snippet-btn" data-snippet="apology" title="사과 문구 추가">
+                <span class="quick-ico">🙏</span>
+                <span>사과</span>
+              </button>
+              <button type="button" class="quick-btn snippet-btn" data-snippet="footer" title="꼬리말 추가">
+                <span class="quick-ico">✅</span>
+                <span>꼬리말</span>
+              </button>
             </div>
 
-            <div class="editor-footer" style="margin-top:0;">
+            <div class="meta-right">
               <span id="editorMeta">선택된 메크로 없음</span>
-              <span id="charCount">0자</span>
+              <span><strong id="charCount">0</strong>자</span>
             </div>
           </div>
         </div>
 
-        <!-- 상단 박스: 문의 → 답변 생성 -->
+        <!-- 문의 → 답변 생성 -->
         <div class="answer-row">
-          <textarea
-            id="questionTextarea"
-            class="question-textarea"
-            placeholder="버튼을 눌러주세요."
-          ></textarea>
+          <textarea id="questionTextarea" class="question-textarea" placeholder="버튼을 눌러주세요."></textarea>
           <div class="answer-side">
-            <button id="editorAnswerBtn" class="answer-btn" type="button">
+            <button id="editorAnswerBtn" class="primary-btn" type="button">
               <span class="icon">🤖</span>
               <span>답변 생성</span>
             </button>
           </div>
         </div>
 
-        <!-- 하단 박스: 편집창 -->
-        <textarea
-          id="editorTextarea"
-          class="editor-textarea"
-          placeholder="편집해 주세요."
-        ></textarea>
+        <!-- 편집 영역 + 하단 AI 버튼 -->
+        <div class="editor-wrap">
+          <textarea id="editorTextarea" class="editor-textarea" placeholder="편집해 주세요."></textarea>
+
+          <div class="editor-actions-bottom">
+            <!-- ✅ 2) AI로 다듬기 버튼을 편집영역 아래로 이동 -->
+            <button id="editorPolishBtn" class="primary-btn polish-btn" type="button">
+              <span class="icon">✨</span>
+              <span>AI로 다듬기</span>
+            </button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
 
-  <!-- 토스트 -->
   <div id="toast" class="toast">복사</div>
 
   <script>
@@ -850,12 +812,10 @@
     const toastEl = document.getElementById("toast");
     let toastTimer = null;
     function showToast(message) {
-      toastEl.textContent = message || "복사되었습니다";
+      toastEl.textContent = message || "완료";
       toastEl.classList.add("show");
       if (toastTimer) clearTimeout(toastTimer);
-      toastTimer = setTimeout(() => {
-        toastEl.classList.remove("show");
-      }, 1500);
+      toastTimer = setTimeout(() => toastEl.classList.remove("show"), 1500);
     }
 
     // === 1) 구글 시트 설정값 ===
@@ -957,8 +917,6 @@
     const editorTitleEl = document.getElementById("editorTitle");
     const editorCategoryEl = document.getElementById("editorCategory");
     const editorTextarea = document.getElementById("editorTextarea");
-    const editorCopyBtn = document.getElementById("editorCopyBtn");
-    const editorResetBtn = document.getElementById("editorResetBtn");
     const editorMetaEl = document.getElementById("editorMeta");
     const charCountEl = document.getElementById("charCount");
     const editorPolishBtn = document.getElementById("editorPolishBtn");
@@ -1044,7 +1002,7 @@
       hidePreview();
     }
 
-    // === 8) 리스트 렌더링 ===
+    // === 8) 리스트 렌더링 (✅ 3) 원본/복사 UI 제거: miniCopy 삭제) ===
     function renderResults(list) {
       resultsEl.innerHTML = "";
       resultCountEl.innerHTML = `총 <strong>${list.length}</strong>개 메크로`;
@@ -1080,17 +1038,7 @@
           titleWrap.appendChild(cat);
         }
 
-        const miniCopy = document.createElement("button");
-        miniCopy.className = "copy-mini";
-        miniCopy.type = "button";
-        miniCopy.innerHTML = `<span class="icon">📋</span><span>원본</span>`;
-        miniCopy.addEventListener("click", (e) => {
-          e.stopPropagation();
-          copyToClipboard(macro.content || "");
-        });
-
         header.appendChild(titleWrap);
-        header.appendChild(miniCopy);
 
         const sub = document.createElement("div");
         sub.className = "macro-subtext";
@@ -1102,18 +1050,12 @@
 
         item.addEventListener("click", () => {
           selectMacro(macro);
-          document.querySelectorAll(".macro-item").forEach((el) => {
-            el.classList.remove("active");
-          });
+          document.querySelectorAll(".macro-item").forEach((el) => el.classList.remove("active"));
           item.classList.add("active");
         });
 
-        item.addEventListener("mouseenter", () => {
-          showPreview(macro, item);
-        });
-        item.addEventListener("mouseleave", () => {
-          hidePreview();
-        });
+        item.addEventListener("mouseenter", () => showPreview(macro, item));
+        item.addEventListener("mouseleave", () => hidePreview());
 
         resultsEl.appendChild(item);
       });
@@ -1134,8 +1076,6 @@
       }
 
       editorTextarea.disabled = false;
-      editorCopyBtn.disabled = false;
-      editorResetBtn.disabled = false;
       editorPolishBtn.disabled = false;
 
       editorTextarea.value = activeMacro.content || "";
@@ -1151,58 +1091,11 @@
     // === 10) 글자수 표시 ===
     function updateCharCount() {
       const len = editorTextarea.value.length;
-      charCountEl.textContent = `${len}자`;
+      charCountEl.textContent = `${len}`;
     }
-    editorTextarea && editorTextarea.addEventListener("input", updateCharCount);
+    editorTextarea.addEventListener("input", updateCharCount);
 
-    // === 11) 클립보드 복사 ===
-    function copyToClipboard(text) {
-      if (!text) return;
-
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard
-          .writeText(text)
-          .then(() => showToast("복사되었습니다"))
-          .catch(() => fallbackCopy(text));
-      } else {
-        fallbackCopy(text);
-      }
-    }
-
-    function fallbackCopy(text) {
-      const textarea = document.createElement("textarea");
-      textarea.value = text;
-      textarea.style.position = "fixed";
-      textarea.style.left = "-9999px";
-      document.body.appendChild(textarea);
-      textarea.focus();
-      textarea.select();
-
-      try {
-        document.execCommand("copy");
-        showToast("복사되었습니다");
-      } catch (e) {
-        alert("복사에 실패했습니다. 직접 선택해서 복사해 주세요.");
-      } finally {
-        document.body.removeChild(textarea);
-      }
-    }
-
-    editorCopyBtn.addEventListener("click", () => {
-      const text = editorTextarea.value || "";
-      if (!text) return;
-      copyToClipboard(text);
-    });
-
-    // === 12) 원본으로 되돌리기 ===
-    editorResetBtn.addEventListener("click", () => {
-      if (!activeMacro) return;
-      editorTextarea.value = activeMacro.content || "";
-      updateCharCount();
-      showToast("원본으로 되돌렸습니다");
-    });
-
-    // === 13) 미리보기 버블 ===
+    // === 11) 미리보기 버블 ===
     function showPreview(macro, anchorEl) {
       if (!macro || !macro.content || !anchorEl) {
         hidePreview();
@@ -1238,7 +1131,7 @@
       previewBubbleEl.style.display = "none";
     }
 
-    // === 14) 스니펫 버튼 ===
+    // === 12) 스니펫 버튼 ===
     function applySnippet(type) {
       if (editorTextarea.disabled) return;
 
@@ -1247,21 +1140,21 @@
 
       if (type === "header") {
         if (trimmed.startsWith(DEFAULT_HEADER)) {
-          showToast("이미 머리말이 들어가 있어요");
+          showToast("이미 머리말이 있어요");
           return;
         }
         const body = text.replace(/^\s+/, "");
         editorTextarea.value = DEFAULT_HEADER + (body ? "\n\n" + body : "");
       } else if (type === "footer") {
         if (trimmed.endsWith(DEFAULT_FOOTER)) {
-          showToast("이미 꼬리말이 들어가 있어요");
+          showToast("이미 꼬리말이 있어요");
           return;
         }
         const withoutTrailing = text.replace(/\s+$/, "");
         editorTextarea.value = (withoutTrailing ? withoutTrailing + "\n\n" : "") + DEFAULT_FOOTER;
       } else if (type === "apology") {
         if (trimmed.includes("더 좋은 상품과 서비스로 찾아뵙겠습니다")) {
-          showToast("이미 사과 문구가 들어가 있어요");
+          showToast("이미 사과 문구가 있어요");
           return;
         }
         const withoutTrailing = text.replace(/\s+$/, "");
@@ -1272,13 +1165,10 @@
     }
 
     snippetButtons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const type = btn.dataset.snippet;
-        applySnippet(type);
-      });
+      btn.addEventListener("click", () => applySnippet(btn.dataset.snippet));
     });
 
-    // === 15) 타입 필터 ===
+    // === 13) 타입 필터 ===
     searchButton.addEventListener("click", searchMacros);
     searchInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") searchMacros();
@@ -1297,7 +1187,7 @@
       });
     });
 
-    // === 16) 톤 모드 토글 ===
+    // === 14) 톤 모드 토글 ===
     function setupToneToggle() {
       toneButtons.forEach(btn => {
         btn.addEventListener("click", () => {
@@ -1314,7 +1204,7 @@
 
     setupToneToggle();
 
-    // === 17) AI로 다듬기 ===
+    // === 15) AI로 다듬기 (✅ 2) 버튼 위치만 변경, 기능 동일) ===
     editorPolishBtn.addEventListener("click", async () => {
       if (editorTextarea.disabled) return;
 
@@ -1353,8 +1243,6 @@
 - 톤: 차분
 - 예민하거나 불편함을 느끼는 고객님을 상대한다고 가정한다.
 - 공감·사과 표현을 1문장 이상 자연스럽게 포함한다.
-  (예: "불편을 겪으셨을 것 같아요.", "걱정되셨을 텐데 죄송합니다." 등)
-- 말투는 또렷하고 단정하게, 최대한 안정감 있게 유지한다.
 - 이모지는 사용하지 않거나, 정말 필요한 경우에만 1개 이내로 제한한다.
           `;
 
@@ -1416,11 +1304,11 @@ ${text}
         alert("요청 중 오류가 발생했습니다: " + (err?.message || err));
       } finally {
         editorPolishBtn.disabled = false;
-        editorPolishBtn.innerText = "AI로 다듬기";
+        editorPolishBtn.innerHTML = `<span class="icon">✨</span><span>AI로 다듬기</span>`;
       }
     });
 
-    // === 18) 고객 문의 → 답변 생성 ===
+    // === 16) 고객 문의 → 답변 생성 ===
     editorAnswerBtn.addEventListener("click", async () => {
       const question = (questionTextarea.value || "").trim();
       if (!question) {
@@ -1428,7 +1316,7 @@ ${text}
         return;
       }
 
-      const tone = getActiveTone(); // "발랄" 또는 "차분"
+      const tone = getActiveTone();
 
       if (!OPENAI_API_KEY) {
         const key = prompt(
@@ -1467,13 +1355,12 @@ ${text}
 [형식]
 - 각 문장 또는 의미 단위마다 줄바꿈(엔터)을 넣어, 모바일 채팅창에서 읽기 편하게 만든다.
 - 존댓말(요/입니다)만 사용한다.
-- 불필요한 인사(예: "좋은 하루 되세요~")는 한 번만, 과하지 않게 사용한다.
-- 머리말/꼬리말은 필요하면 자연스럽게 포함해도 되지만, 너무 길게 늘리지 않는다.
+- 불필요한 인사는 과하지 않게.
 
 [내용]
-- 고객이 궁금해하는 핵심을 먼저 짚고 바로 답해 준다.
-- 필요한 경우, 추가로 확인해야 할 정보(예: 주문번호, 연락처 등)를 정중하게 요청한다.
-- 조건/주의사항/처리 예상일 등 중요한 정보는 빼먹지 않게 또렷하게 적는다.
+- 고객이 궁금해하는 핵심을 먼저 짚고 바로 답한다.
+- 필요하면 추가 정보(주문번호 등)를 정중하게 요청한다.
+- 조건/주의사항/처리 예상일 등 중요한 정보는 빼먹지 않는다.
 
 [톤 규칙]
 ${toneInstructionForAnswer}
@@ -1513,16 +1400,13 @@ ${question}
           if (answer) {
             if (editorTextarea.value.trim()) {
               const replace = confirm("편집창 내용을 새로 생성된 답변으로 교체할까요?");
-              if (replace) {
-                editorTextarea.value = answer;
-              } else {
-                editorTextarea.value = editorTextarea.value.replace(/\s*$/, "") + "\n\n" + answer;
-              }
+              if (replace) editorTextarea.value = answer;
+              else editorTextarea.value = editorTextarea.value.replace(/\s*$/, "") + "\n\n" + answer;
             } else {
               editorTextarea.value = answer;
             }
             updateCharCount();
-            showToast("문의 답변을 생성했어요");
+            showToast("답변 생성 완료");
           }
         }
       } catch (err) {
