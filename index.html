@@ -660,7 +660,7 @@
       <div class="app-title-wrap">
         <div class="app-title-row">
           <div class="app-title">
-            메크로
+            TEMPLETE
           </div>
           <button id="sheetOpenBtn" class="app-tag" type="button" title="Google Sheets 열기">
             <span>Edit</span>
@@ -753,7 +753,7 @@
 
             <!-- ✅ (변경) 머리말/사과/꼬리말 : 라디오 UI + 클릭 즉시 삽입 -->
             <div class="snippet-radio-group" id="snippetRadioGroup">
-              <span class="snippet-label"> + </span>
+              <span class="snippet-label"> ➕ </span>
 
               <label class="snippet-radio active">
                 <input type="radio" name="snippet" value="header" checked />
@@ -778,11 +778,11 @@
         </div>
 
         <div class="answer-row">
-          <textarea id="questionTextarea" class="question-textarea" placeholder="버튼을 눌러주세요."></textarea>
+          <textarea id="questionTextarea" class="question-textarea"></textarea>
           <div class="answer-side">
             <button id="editorAnswerBtn" class="answer-btn" type="button">
               <span class="icon"></span>
-              <span>답변</span>
+              <span>Enter</span>
             </button>
           </div>
         </div>
@@ -1003,7 +1003,7 @@
     // === 8) 리스트 렌더링 (원본 그대로) ===
     function renderResults(list) {
       resultsEl.innerHTML = "";
-      resultCountEl.innerHTML = `총 <strong>${list.length}</strong>개 메크로`;
+      resultCountEl.innerHTML = `총 <strong>${list.length}</strong>개`;
 
       if (list.length === 0) {
         const empty = document.createElement("div");
