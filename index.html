@@ -125,7 +125,7 @@ body{
   border-radius:999px;
   border:1px solid rgba(170,150,230,.22);
   background: rgba(245,243,251,.75);
-ㅁ  font-size:13px
+ㅁ  font-size:13px;
   box-shadow: var(--shadow-card);
 }
 
@@ -153,38 +153,7 @@ body{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M11 19a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z' stroke='rgba(110,106,130,0.55)' stroke-width='2'/%3E%3Cpath d='M20 20l-3.5-3.5' stroke='rgba(255,143,188,0.8)' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
   pointer-events:none;
 }
-.search-box::after{
-  content:"Enter %E2%86%B5";
-  position:absolute;
-  right: 118px; /* 버튼이 옆에 있어서 여유 */
-  top:50%;
-  transform: translateY(-50%);
-  font-size:11px;
-  color: rgba(110,106,130,.55);
-  pointer-events:none;
-}
 
-/* search button */
-.search-button{
-  height:42px;                 /* input과 동일 */
-  padding:0 16px;
-  border-radius:999px;
-  border:1px solid rgba(170,150,230,.22);
-  background: rgba(255,255,255,.70);
-  color: rgba(47,42,58,.88);
-  font-size:13px;
-  font-weight:700;
-  cursor:pointer;
-  white-space:nowrap;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  box-shadow: var(--shadow-card);
-}
-.search-button:hover{
-  border-color: rgba(255,143,188,.35);
-  background: rgba(255,143,188,.10);
-}
 
 /* top row */
 .top-row{
@@ -666,18 +635,7 @@ body{
   box-shadow: 0 0 0 4px rgba(255,143,188,.16), 0 6px 18px rgba(30,18,60,.06);
 }
 
-    
-/* responsive */
-@media (max-width: 900px){
-  body{ padding:12px; }
-  .app{ padding:16px 14px; height:auto; }
-  .app-body{ flex-direction:column; }
-  .editor-header{ flex-direction:column; align-items:stretch; }
-  .answer-row{ grid-template-columns:1fr; }
-  .bottom-actions{ justify-content:stretch; }
-  .polish-bottom-btn{ width:100%; }
-  .search-box::after{ right: 96px; } /* 모바일에서 버튼 영역 고려 */
-}
+
 </style>
 
 </head>
