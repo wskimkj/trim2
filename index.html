@@ -605,7 +605,68 @@ body{
   display:flex;
   gap:6px;
 }
+/* ✅ 검색 버튼: 기능 유지를 위해 DOM은 남기고 "숨김" */
+#searchButton{
+  display:none !important;
+}
 
+/* ✅ 검색바: Enter ↵ 힌트 (버튼이 없으니 오른쪽 끝에 붙이기) */
+.search-box{
+  position:relative;
+}
+
+.search-input{
+  padding-right: 72px; /* Enter 힌트 자리 */
+}
+
+/* 기존 search-box::after 쓰고 있었다면 right 값만 바꿔도 됨 */
+.search-box::after{
+  content:"Enter ↵";
+  position:absolute;
+  right:14px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:11px;
+  color: rgba(110,106,130,.55);
+  pointer-events:none;
+}
+/* ✅ category filter: 텍스트/정렬 톤 맞추기 */
+.category-filter{
+  display:flex;               /* 기존에 none이면 이걸로 보이게 */
+  align-items:center;
+  gap:8px;
+  font-size:12px;
+  color: rgba(110,106,130,.85);
+}
+
+/* ✅ select를 pill 느낌으로 + 화살표 커스텀 */
+.category-select{
+  height:34px;
+  padding:0 34px 0 12px;
+  border-radius:999px;
+  border:1px solid rgba(170,150,230,.22);
+  background:#fff;
+  box-shadow: 0 6px 18px rgba(30,18,60,.06);
+  font-size:12px;
+  color: rgba(47,42,58,.88);
+  outline:none;
+
+  appearance:none;
+  -webkit-appearance:none;
+  -moz-appearance:none;
+
+  background-repeat:no-repeat;
+  background-position: right 12px center;
+  background-size: 14px 14px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M7 10l5 5 5-5' stroke='rgba(110,106,130,0.65)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+.category-select:focus{
+  border-color: rgba(255,143,188,.55);
+  box-shadow: 0 0 0 4px rgba(255,143,188,.16), 0 6px 18px rgba(30,18,60,.06);
+}
+
+    
 /* responsive */
 @media (max-width: 900px){
   body{ padding:12px; }
