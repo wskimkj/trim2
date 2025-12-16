@@ -536,15 +536,64 @@ body{
 }
 
 /* preview bubble */
-.preview-bubble{
-  background: rgba(255,255,255,.92);
-  border-radius:18px;
-  padding:10px 12px;
-  box-shadow: var(--shadow-main);
-  border:1px solid rgba(170,150,230,.22);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
+/* ===== Preview Bubble (structure SAME, color ONLY) ===== */
+.preview-bubble {
+  position: absolute;
+  top: 60px;
+  left: calc(100% + 14px);
+  width: 260px;
+  max-height: 200px;
+
+  background: radial-gradient(
+    circle at top left,
+    rgba(248, 245, 255, 0.98),
+    rgba(252, 250, 255, 0.96)
+  );
+
+  color: #111827;
+  border-radius: 18px;
+  padding: 10px 12px;
+
+  box-shadow:
+    0 20px 45px rgba(168, 85, 247, 0.35),
+    0 0 0 1px rgba(184, 167, 255, 0.85);
+
+  font-size: 12px;
+  backdrop-filter: blur(18px);
+  z-index: 20;
+
+  display: none;
+  transition: opacity 0.15s ease-out, transform 0.15s ease-out;
 }
+
+.preview-bubble.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.preview-title {
+  font-weight: 600;
+  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #6b5fa7; /* 기존 회청색 → 보라톤 */
+}
+
+.preview-title span.icon {
+  font-size: 14px;
+}
+
+.preview-body {
+  font-size: 12px;
+  line-height: 1.5;
+  max-height: 150px;
+  overflow: auto;
+  white-space: pre-wrap;
+  color: #3f3a55; /* 기존 #374151 계열 → 보라 잿빛 */
+}
+
 
 /* responsive */
 @media (max-width: 900px){
