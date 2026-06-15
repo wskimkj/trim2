@@ -95,6 +95,15 @@ body{
   border-color: rgba(255,143,188,.38);
 }
 
+.quick-copy-btn{
+  background: rgba(184,167,255,.15);
+  border-color: rgba(184,167,255,.30);
+}
+.quick-copy-btn:hover{
+  background: rgba(184,167,255,.24);
+  border-color: rgba(184,167,255,.42);
+}
+
 .app-body{
   display:flex;
   gap:14px;
@@ -626,6 +635,12 @@ body{
           <button id="sheetOpenBtn" class="app-tag" type="button" title="Google Sheets 열기">
             <span>Edit</span>
           </button>
+          <button id="chatCopyBtn" class="app-tag quick-copy-btn" type="button" title="채팅 URL 복사">
+            <span>채팅</span>
+          </button>
+          <button id="accountCopyBtn" class="app-tag quick-copy-btn" type="button" title="계좌 정보 복사">
+            <span>계좌</span>
+          </button>
         </div>
         <div class="app-subtitle"></div>
       </div>
@@ -966,6 +981,33 @@ body{
     const editorAnswerBtn = document.getElementById("editorAnswerBtn");
 
     const sheetOpenBtn = document.getElementById("sheetOpenBtn");
+    const chatCopyBtn = document.getElementById("chatCopyBtn");
+    const accountCopyBtn = document.getElementById("accountCopyBtn");
+
+    const CHAT_COPY_TEXT = "https://whitesands.channel.io/home";
+    const ACCOUNT_COPY_TEXT = "■ 은행명 : 국민은행\n■ 계좌번호 : 489701-01-610574\n■ 예금주명 : 정재헌(제이에이치그룹)";
+
+    async function copyToClipboard(text, successMessage) {
+      try {
+        if (navigator.clipboard && window.isSecureContext) {
+          await navigator.clipboard.writeText(text);
+        } else {
+          const tempTextarea = document.createElement("textarea");
+          tempTextarea.value = text;
+          tempTextarea.setAttribute("readonly", "");
+          tempTextarea.style.position = "fixed";
+          tempTextarea.style.left = "-9999px";
+          document.body.appendChild(tempTextarea);
+          tempTextarea.select();
+          document.execCommand("copy");
+          document.body.removeChild(tempTextarea);
+        }
+        showToast(successMessage || "복사했어요");
+      } catch (err) {
+        console.error("복사 오류:", err);
+        alert("복사에 실패했습니다. 다시 시도해 주세요.");
+      }
+    }
 
     const listPanelElRef = document.querySelector(".list-panel");
     const typeFilterRadios = document.querySelectorAll('input[name="typeFilter"]');
@@ -983,6 +1025,14 @@ body{
     // === 5) 시트 열기 버튼 ===
     sheetOpenBtn.addEventListener("click", () => {
       window.open(SHEET_LINK, "_blank", "noopener");
+    });
+
+    chatCopyBtn.addEventListener("click", () => {
+      copyToClipboard(CHAT_COPY_TEXT, "채팅 URL을 복사했어요");
+    });
+
+    accountCopyBtn.addEventListener("click", () => {
+      copyToClipboard(ACCOUNT_COPY_TEXT, "계좌 정보를 복사했어요");
     });
 
     // === 6) 카테고리 옵션 생성 ===
